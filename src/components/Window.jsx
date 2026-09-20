@@ -18,7 +18,7 @@ export default function Window({ windowData, children, desktopSize, desktopRef }
     <section role="dialog" aria-label={windowData.label} hidden={windowData.minimized}
       onPointerDown={() => focusWindow(windowData.id)} onFocusCapture={() => { if (!isActive) focusWindow(windowData.id); }}
       style={{ left: maximized ? 0 : x, top: maximized ? 0 : y, width: maximized ? desktopSize.width : width, height: maximized ? desktopSize.height : height, zIndex: windowData.zIndex, display: windowData.minimized ? 'none' : 'flex' }}
-      className={`studio-window absolute flex-col bg-white/95 backdrop-blur-3xl overflow-hidden border border-black/5 ${isActive ? 'shadow-2xl' : 'shadow-xl opacity-95'} ${maximized ? 'rounded-none' : 'rounded-xl'}`}>
+      className={`studio-window ${isActive ? 'is-active' : 'is-inactive'} absolute flex-col bg-white/95 backdrop-blur-3xl overflow-hidden border border-black/5 ${maximized ? 'rounded-none' : 'rounded-xl'}`}>
       
       <div className={`window-titlebar flex h-12 shrink-0 touch-none select-none items-center px-4 border-b border-black/5 transition-colors ${isActive ? 'bg-white/50' : 'bg-white/30'}`}
         onDoubleClick={event => { if (!event.target.closest('button')) maximizeWindow(windowData.id); }}
@@ -64,6 +64,7 @@ export default function Window({ windowData, children, desktopSize, desktopRef }
         </span>
       </div>
       
+      <div className="window-surface-highlight" aria-hidden="true" />
       <div className="relative min-h-0 flex-1 select-text overflow-auto bg-transparent">
         {children}
       </div>
