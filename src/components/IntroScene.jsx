@@ -10,7 +10,7 @@ import { CameraFloatRig, SpaceWorld } from './SpaceWorld.jsx';
 
 const SCREEN = new THREE.Vector3(-0.079, 0.085, 0.312);
 const SCREEN_ROTATION = new THREE.Euler(-0.08, 0, 0);
-const BG_COLOR = '#010106';
+const BG_COLOR = '#000000';
 
 function ComputerModel({ onClick, isZoomed, windowContext }) {
   const groupRef = useRef();
@@ -74,14 +74,15 @@ function IntroExperience() {
       <SceneBoundary fallback={fallback}>
         <Canvas shadows={{ type: THREE.VSMShadowMap }} dpr={[1, 1.5]} camera={{ position: [1.55, 1.1, 2.15], fov: 45 }} fallback={null}>
           <color attach="background" args={[BG_COLOR]} />
-          <ambientLight intensity={0.15} />
-          <hemisphereLight args={['#9fb7cc', '#231a29', 0.65]} />
-          <spotLight position={[-1.8, 3.5, 2]} color="#e0f0ff" intensity={35}
-            angle={0.65} penumbra={1} decay={2} distance={12} castShadow
+          <ambientLight intensity={0.32} />
+          <hemisphereLight args={['#dbe4ff', '#080811', 1.05]} />
+          <spotLight position={[-1.8, 3.5, 2]} color="#e7edff" intensity={48}
+            angle={0.72} penumbra={1} decay={2} distance={14} castShadow
             shadow-mapSize={[1024, 1024]} shadow-radius={4} shadow-blurSamples={8}
             shadow-bias={-0.0003} shadow-normalBias={0.015} />
-          <directionalLight position={[2, 1.5, -3]} color="#aab7cc" intensity={1.5} />
-          <directionalLight position={[-3, 1, 3]} color="#556688" intensity={0.55} />
+          <pointLight position={[1.75, 1.45, 2.65]} color="#ffffff" intensity={16} distance={7} decay={2} />
+          <directionalLight position={[2.5, 1.8, 3]} color="#cbd7ff" intensity={2.4} />
+          <directionalLight position={[-3, 1, 3]} color="#5f6f99" intensity={0.8} />
           <SpaceWorld />
           <React.Suspense fallback={<Html center><p className="whitespace-nowrap text-white" role="status">Loading computer…</p></Html>}>
             <ComputerModel onClick={() => setIsZoomed(true)} isZoomed={isZoomed} windowContext={windowContext} />
