@@ -1,3 +1,4 @@
+# Preview workflow is bootstrapped on main; this branch copy triggers the current PR preview.
 name: PR preview
 
 on:
