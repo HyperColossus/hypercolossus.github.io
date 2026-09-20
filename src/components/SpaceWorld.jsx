@@ -15,6 +15,7 @@ const pointVertexShader = `
   uniform float uPixelRatio;
   uniform float uBaseOpacity;
   uniform float uPointScale;
+  uniform float uMinPointSize;
 
   varying float vAlpha;
 
@@ -24,7 +25,8 @@ const pointVertexShader = `
     vAlpha = uBaseOpacity * (1.0 - aAmplitude + twinkle * aAmplitude);
 
     gl_Position = projectionMatrix * mvPosition;
-    gl_PointSize = aScale * uPointScale * uPixelRatio * (4.0 / max(1.0, -mvPosition.z));
+    float attenuatedSize = aScale * uPointScale * uPixelRatio * (8.0 / max(8.0, -mvPosition.z));
+    gl_PointSize = max(uMinPointSize * uPixelRatio, attenuatedSize);
   }
 `;
 
@@ -93,6 +95,7 @@ function StarPoints({
   color,
   opacity,
   pointScale,
+  minPointSize = 0.0,
 }) {
   const materialRef = useRef();
   const field = useMemo(
@@ -105,8 +108,9 @@ function StarPoints({
     uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 1.5) },
     uBaseOpacity: { value: opacity },
     uPointScale: { value: pointScale },
+    uMinPointSize: { value: minPointSize },
     uColor: { value: new THREE.Color(color) },
-  }), [color, opacity, pointScale]);
+  }), [color, minPointSize, opacity, pointScale]);
 
   useFrame(({ clock }) => {
     if (materialRef.current) materialRef.current.uniforms.uTime.value = clock.elapsedTime;
@@ -137,50 +141,52 @@ function StarPoints({
 
 function DeepStarField() {
   const bounds = useMemo(() => ({
-    x: [-38, 38],
-    y: [-24, 24],
-    z: [-62, -9],
+    x: [-105, 105],
+    y: [-64, 64],
+    z: [-150, -28],
   }), []);
-  const scaleRange = useMemo(() => [0.28, 0.9], []);
+  const scaleRange = useMemo(() => [0.22, 0.72], []);
   const speedRange = useMemo(() => [0.18, 0.7], []);
   const amplitudeRange = useMemo(() => [0.01, 0.16], []);
 
   return (
     <StarPoints
-      count={1200}
+      count={1800}
       seed={90421}
       bounds={bounds}
       scaleRange={scaleRange}
       speedRange={speedRange}
       amplitudeRange={amplitudeRange}
-      color="#dfe7ff"
-      opacity={0.52}
-      pointScale={7}
+      color="#f4f6ff"
+      opacity={0.88}
+      pointScale={5.2}
+      minPointSize={0.62}
     />
   );
 }
 
 function TwinkleStars() {
   const bounds = useMemo(() => ({
-    x: [-15, 15],
-    y: [-9, 10],
-    z: [-27, -3.5],
+    x: [-34, 34],
+    y: [-22, 22],
+    z: [-62, -14],
   }), []);
-  const scaleRange = useMemo(() => [0.7, 1.9], []);
+  const scaleRange = useMemo(() => [0.34, 1.0], []);
   const speedRange = useMemo(() => [0.45, 1.7], []);
   const amplitudeRange = useMemo(() => [0.28, 0.78], []);
 
   return (
     <StarPoints
-      count={92}
+      count={150}
       seed={17831}
       bounds={bounds}
       scaleRange={scaleRange}
       speedRange={speedRange}
       amplitudeRange={amplitudeRange}
-      color="#b9c5ff"
-      opacity={0.88}
-      pointScale={9}
+      color="#d9e0ff"
+      opacity={1}
+      pointScale={6.4}
+      minPointSize={0.9}
     />
   );
 }
@@ -188,7 +194,7 @@ function TwinkleStars() {
 function AmbientSpaceDust() {
   const pointsRef = useRef();
   const materialRef = useRef();
-  const count = 420;
+  const count = 240;
 
   const field = useMemo(() => {
     const random = seededRandom(51277);
@@ -201,16 +207,16 @@ function AmbientSpaceDust() {
 
     for (let index = 0; index < count; index += 1) {
       const offset = index * 3;
-      positions[offset] = THREE.MathUtils.lerp(-10, 10, random());
-      positions[offset + 1] = THREE.MathUtils.lerp(-6, 7, random());
-      positions[offset + 2] = THREE.MathUtils.lerp(-13, 1.4, random());
+      positions[offset] = THREE.MathUtils.lerp(-15, 15, random());
+      positions[offset + 1] = THREE.MathUtils.lerp(-9, 9, random());
+      positions[offset + 2] = THREE.MathUtils.lerp(-24, -1.5, random());
 
-      const depthFactor = THREE.MathUtils.clamp((positions[offset + 2] + 13) / 14.4, 0, 1);
-      velocities[offset] = THREE.MathUtils.lerp(0.004, 0.018, depthFactor) + (random() - 0.5) * 0.006;
-      velocities[offset + 1] = THREE.MathUtils.lerp(0.008, 0.026, depthFactor) + random() * 0.008;
-      velocities[offset + 2] = THREE.MathUtils.lerp(0.004, 0.018, depthFactor);
+      const depthFactor = THREE.MathUtils.clamp((positions[offset + 2] + 24) / 22.5, 0, 1);
+      velocities[offset] = THREE.MathUtils.lerp(0.001, 0.006, depthFactor) + (random() - 0.5) * 0.002;
+      velocities[offset + 1] = THREE.MathUtils.lerp(0.0015, 0.007, depthFactor) + (random() - 0.5) * 0.002;
+      velocities[offset + 2] = THREE.MathUtils.lerp(0.0008, 0.004, depthFactor);
 
-      scales[index] = THREE.MathUtils.lerp(0.32, 1.15, random()) * (0.65 + depthFactor * 0.65);
+      scales[index] = THREE.MathUtils.lerp(0.11, 0.32, random()) * (0.8 + depthFactor * 0.35);
       phases[index] = random() * Math.PI * 2;
       speeds[index] = THREE.MathUtils.lerp(0.18, 0.62, random());
       amplitudes[index] = THREE.MathUtils.lerp(0.04, 0.2, random());
@@ -222,9 +228,10 @@ function AmbientSpaceDust() {
   const uniforms = useMemo(() => ({
     uTime: { value: 0 },
     uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 1.5) },
-    uBaseOpacity: { value: 0.34 },
-    uPointScale: { value: 8 },
-    uColor: { value: new THREE.Color('#c7d2ff') },
+    uBaseOpacity: { value: 0.18 },
+    uPointScale: { value: 4.2 },
+    uMinPointSize: { value: 0.0 },
+    uColor: { value: new THREE.Color('#bfc8e8') },
   }), []);
 
   useFrame(({ clock }, delta) => {
@@ -240,9 +247,9 @@ function AmbientSpaceDust() {
       positions[offset + 1] += field.velocities[offset + 1] * delta * 60;
       positions[offset + 2] += field.velocities[offset + 2] * delta * 60;
 
-      if (positions[offset] > 10.5) positions[offset] = -10.5;
-      if (positions[offset + 1] > 7.5) positions[offset + 1] = -6.5;
-      if (positions[offset + 2] > 1.55) positions[offset + 2] = -13.5;
+      if (positions[offset] > 15.5) positions[offset] = -15.5;
+      if (positions[offset + 1] > 9.5) positions[offset + 1] = -9.5;
+      if (positions[offset + 2] > -1.35) positions[offset + 2] = -24.5;
     }
 
     positionAttribute.needsUpdate = true;
@@ -275,7 +282,7 @@ function AmbientSpaceDust() {
 function ForegroundDust() {
   const pointsRef = useRef();
   const materialRef = useRef();
-  const count = 30;
+  const count = 18;
 
   const field = useMemo(() => {
     const random = seededRandom(77123);
@@ -296,7 +303,7 @@ function ForegroundDust() {
       velocities[offset + 1] = THREE.MathUtils.lerp(0.006, 0.018, random());
       velocities[offset + 2] = THREE.MathUtils.lerp(0.002, 0.009, random());
 
-      scales[index] = THREE.MathUtils.lerp(1.2, 3.0, random());
+      scales[index] = THREE.MathUtils.lerp(0.24, 0.68, random());
       phases[index] = random() * Math.PI * 2;
       speeds[index] = THREE.MathUtils.lerp(0.1, 0.35, random());
       amplitudes[index] = THREE.MathUtils.lerp(0.02, 0.12, random());
@@ -308,9 +315,10 @@ function ForegroundDust() {
   const uniforms = useMemo(() => ({
     uTime: { value: 0 },
     uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 1.5) },
-    uBaseOpacity: { value: 0.22 },
-    uPointScale: { value: 13 },
-    uColor: { value: new THREE.Color('#eef1ff') },
+    uBaseOpacity: { value: 0.14 },
+    uPointScale: { value: 5.2 },
+    uMinPointSize: { value: 0.0 },
+    uColor: { value: new THREE.Color('#e6eaff') },
   }), []);
 
   useFrame(({ camera, clock }, delta) => {
