@@ -54,36 +54,6 @@ function seededRandom(seed) {
   };
 }
 
-function createPointField({
-  count,
-  seed,
-  radiusRange,
-  scaleRange,
-  speedRange,
-  amplitudeRange,
-}) {
-  const random = seededRandom(seed);
-  const positions = new Float32Array(count * 3);
-  const scales = new Float32Array(count);
-  const phases = new Float32Array(count);
-  const speeds = new Float32Array(count);
-  const amplitudes = new Float32Array(count);
-
-  for (let index = 0; index < count; index += 1) {
-    const offset = index * 3;
-    positions[offset] = THREE.MathUtils.lerp(bounds.x[0], bounds.x[1], random());
-    positions[offset + 1] = THREE.MathUtils.lerp(bounds.y[0], bounds.y[1], random());
-    positions[offset + 2] = THREE.MathUtils.lerp(bounds.z[0], bounds.z[1], random());
-
-    scales[index] = THREE.MathUtils.lerp(scaleRange[0], scaleRange[1], random());
-    phases[index] = random() * Math.PI * 2;
-    speeds[index] = THREE.MathUtils.lerp(speedRange[0], speedRange[1], random());
-    amplitudes[index] = THREE.MathUtils.lerp(amplitudeRange[0], amplitudeRange[1], random());
-  }
-
-  return { positions, scales, phases, speeds, amplitudes };
-}
-
 function createSphericalPointField({
   count,
   seed,
@@ -122,7 +92,7 @@ function createSphericalPointField({
 function StarPoints({
   count,
   seed,
-  bounds,
+  radiusRange,
   scaleRange,
   speedRange,
   amplitudeRange,
