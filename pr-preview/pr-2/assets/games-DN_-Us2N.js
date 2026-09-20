@@ -1,0 +1,1 @@
+import{f as e,l as t,o as n,s as r}from"./radio-BVBHIrGX.js";import{t as i}from"./standalone-C4qIPoNP.js";var a=e(t(),1),o=e(r(),1),s=n();(0,o.createRoot)(document.getElementById(`root`)).render((0,s.jsx)(a.StrictMode,{children:(0,s.jsx)(i,{})}));
