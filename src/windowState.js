@@ -1,7 +1,8 @@
 export const initialWindowState = { windows: [], activeWindow: null };
 
 const topVisible = windows => [...windows].reverse().find(win => !win.minimized)?.id ?? null;
-const stack = windows => windows.map((win, index) => ({ ...win, zIndex: index + 1 }));
+const WINDOW_Z_BASE = 1000;
+const stack = windows => windows.map((win, index) => ({ ...win, zIndex: WINDOW_Z_BASE + index }));
 
 export function windowReducer(state, action) {
   const current = state.windows.find(win => win.id === action.id);
