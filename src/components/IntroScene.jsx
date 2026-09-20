@@ -2,7 +2,6 @@ import React, { useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useCursor, useGLTF, Center, Html, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { Power } from 'lucide-react';
 import Desktop from './Desktop';
 import { WindowProvider } from '../WindowContext.jsx';
 import { WindowContext, useWindows } from '../useWindows';
@@ -17,7 +16,6 @@ const BG_COLOR = '#000000';
 
 function ComputerModel({ onClick, isZoomed, windowContext }) {
   const groupRef = useRef();
-  const [hovered, setHovered] = useState(false);
   const computerModelUrl = `${import.meta.env.BASE_URL}retro_computer_fixed.glb`;
   const { scene } = useGLTF(computerModelUrl);
   const model = useMemo(() => {
@@ -30,7 +28,6 @@ function ComputerModel({ onClick, isZoomed, windowContext }) {
     });
     return instance;
   }, [scene]);
-  useCursor(!isZoomed && hovered);
   useFrame((state, delta) => {
     if (!groupRef.current) return;
 
@@ -44,15 +41,119 @@ function ComputerModel({ onClick, isZoomed, windowContext }) {
     groupRef.current.rotation.x = THREE.MathUtils.damp(groupRef.current.rotation.x, targetPitch, 2.4, delta);
   });
   return (
-    <group ref={groupRef} onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}
-      onClick={!isZoomed ? (event) => { event.stopPropagation(); onClick(); } : undefined}>
+    <group ref={groupRef}>
       <Center><primitive object={model} scale={2} /></Center>
+      <PhysicalPowerButton onPower={onClick} disabled={isZoomed} />
       <ScreenPortalGlow isZoomed={isZoomed} />
       <SmartScreen isPoweredOn={isZoomed}>
         <div style={{ width: 800, height: 600 }} className="os-desktop overflow-hidden rounded-[32px] bg-zinc-900 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
           <WindowContext.Provider value={windowContext}><Desktop /></WindowContext.Provider>
         </div>
       </SmartScreen>
+    </group>
+  );
+}
+
+function PhysicalPowerButton({ onPower, disabled }) {
+  const groupRef = useRef();
+  const capRef = useRef();
+  const ringRef = useRef();
+  const [hovered, setHovered] = useState(false);
+  const pressedRef = useRef(false);
+  const elapsedRef = useRef(0);
+  const firedRef = useRef(false);
+
+  useCursor(!disabled && hovered);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current || !capRef.current || !ringRef.current) return;
+
+    if (!pressedRef.current) {
+      capRef.current.position.z = THREE.MathUtils.damp(capRef.current.position.z, 0, 18, delta);
+      ringRef.current.material.emissiveIntensity = THREE.MathUtils.damp(
+        ringRef.current.material.emissiveIntensity,
+        hovered && !disabled ? 0.5 : 0.12,
+        10,
+        delta,
+      );
+      return;
+    }
+
+    elapsedRef.current += delta;
+    const pressDuration = 0.18;
+    const progress = Math.min(elapsedRef.current / pressDuration, 1);
+    const pressCurve = Math.sin(progress * Math.PI);
+
+    capRef.current.position.z = -0.014 * pressCurve;
+    ringRef.current.material.emissiveIntensity = 0.65 + pressCurve * 1.6;
+
+    if (progress >= 1 && !firedRef.current) {
+      firedRef.current = true;
+      pressedRef.current = false;
+      onPower();
+    }
+  });
+
+  const handlePower = (event) => {
+    event.stopPropagation();
+    if (disabled || pressedRef.current || firedRef.current) return;
+    pressedRef.current = true;
+    elapsedRef.current = 0;
+  };
+
+  return (
+    <group
+      ref={groupRef}
+      position={[0.165, -0.135, 0.344]}
+      rotation={[0, 0, 0]}
+      onPointerOver={(event) => {
+        event.stopPropagation();
+        if (!disabled) setHovered(true);
+      }}
+      onPointerOut={() => setHovered(false)}
+      onClick={handlePower}
+    >
+      <mesh position={[0, 0, -0.006]}>
+        <cylinderGeometry args={[0.026, 0.026, 0.012, 32]} />
+        <meshStandardMaterial color="#15171d" roughness={0.7} metalness={0.25} />
+      </mesh>
+
+      <mesh ref={capRef} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.018, 0.018, 0.01, 32]} />
+        <meshStandardMaterial
+          color="#2b2f39"
+          roughness={0.5}
+          metalness={0.35}
+          emissive="#11131a"
+          emissiveIntensity={0.1}
+        />
+      </mesh>
+
+      <mesh ref={ringRef} position={[0, 0, 0.008]}>
+        <torusGeometry args={[0.0215, 0.0023, 10, 32]} />
+        <meshStandardMaterial
+          color="#69708b"
+          emissive="#8c9cff"
+          emissiveIntensity={0.12}
+          roughness={0.45}
+          metalness={0.45}
+        />
+      </mesh>
+
+      <mesh position={[0, 0, 0.014]}>
+        <ringGeometry args={[0.004, 0.0055, 24, 1, 0.48, Math.PI * 1.04]} />
+        <meshBasicMaterial color="#cfd7ff" transparent opacity={0.82} toneMapped={false} />
+      </mesh>
+      <mesh position={[0, 0.004, 0.014]}>
+        <planeGeometry args={[0.0028, 0.012]} />
+        <meshBasicMaterial color="#cfd7ff" transparent opacity={0.82} toneMapped={false} />
+      </mesh>
+
+      {/* Larger invisible hit target so the physical control is easy to click. */}
+      <mesh position={[0, 0, 0.01]}>
+        <circleGeometry args={[0.046, 24]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      </mesh>
     </group>
   );
 }
@@ -104,7 +205,7 @@ function IntroExperience() {
           />
           <CameraZoomRig isZoomed={isZoomed} />
         </Canvas>
-        {!isZoomed && <div className="intro-footer"><div><p className="eyebrow">A familiar place. A few new ideas.</p><h1>Make yourself <em>at home.</em></h1><p>An interactive portfolio by Zack Siegel.</p></div><div className="intro-actions"><span>DRAG TO ORBIT</span><button className="studio-button" onClick={() => setIsZoomed(true)}><Power size={14} />Start computer</button></div></div>}
+        {!isZoomed && <div className="intro-footer"><div><p className="eyebrow">A familiar place. A few new ideas.</p><h1>Make yourself <em>at home.</em></h1><p>An interactive portfolio by Zack Siegel.</p></div><div className="intro-actions"><span>DRAG TO ORBIT · PRESS THE COMPUTER POWER BUTTON</span></div></div>}
       </SceneBoundary>
     </div>
   );
