@@ -2,9 +2,6 @@ import React, { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const BASE_CAMERA = new THREE.Vector3(1.55, 1.1, 2.15);
-const CAMERA_LOOK = new THREE.Vector3(0, 0.02, 0);
-
 const pointVertexShader = `
   attribute float aScale;
   attribute float aPhase;
@@ -16,6 +13,7 @@ const pointVertexShader = `
   uniform float uBaseOpacity;
   uniform float uPointScale;
   uniform float uMinPointSize;
+  uniform float uConstantSize;
 
   varying float vAlpha;
 
@@ -26,7 +24,8 @@ const pointVertexShader = `
 
     gl_Position = projectionMatrix * mvPosition;
     float attenuatedSize = aScale * uPointScale * uPixelRatio * (8.0 / max(8.0, -mvPosition.z));
-    gl_PointSize = max(uMinPointSize * uPixelRatio, attenuatedSize);
+    float constantSize = aScale * uPointScale * uPixelRatio;
+    gl_PointSize = max(uMinPointSize * uPixelRatio, mix(attenuatedSize, constantSize, uConstantSize));
   }
 `;
 
@@ -58,7 +57,7 @@ function seededRandom(seed) {
 function createPointField({
   count,
   seed,
-  bounds,
+  radiusRange,
   scaleRange,
   speedRange,
   amplitudeRange,
@@ -85,6 +84,41 @@ function createPointField({
   return { positions, scales, phases, speeds, amplitudes };
 }
 
+function createSphericalPointField({
+  count,
+  seed,
+  radiusRange,
+  scaleRange,
+  speedRange,
+  amplitudeRange,
+}) {
+  const random = seededRandom(seed);
+  const positions = new Float32Array(count * 3);
+  const scales = new Float32Array(count);
+  const phases = new Float32Array(count);
+  const speeds = new Float32Array(count);
+  const amplitudes = new Float32Array(count);
+
+  for (let index = 0; index < count; index += 1) {
+    const offset = index * 3;
+    const azimuth = random() * Math.PI * 2;
+    const vertical = random() * 2 - 1;
+    const horizontal = Math.sqrt(1 - vertical * vertical);
+    const radius = THREE.MathUtils.lerp(radiusRange[0], radiusRange[1], random());
+
+    positions[offset] = radius * horizontal * Math.cos(azimuth);
+    positions[offset + 1] = radius * vertical;
+    positions[offset + 2] = radius * horizontal * Math.sin(azimuth);
+
+    scales[index] = THREE.MathUtils.lerp(scaleRange[0], scaleRange[1], random());
+    phases[index] = random() * Math.PI * 2;
+    speeds[index] = THREE.MathUtils.lerp(speedRange[0], speedRange[1], random());
+    amplitudes[index] = THREE.MathUtils.lerp(amplitudeRange[0], amplitudeRange[1], random());
+  }
+
+  return { positions, scales, phases, speeds, amplitudes };
+}
+
 function StarPoints({
   count,
   seed,
@@ -96,11 +130,12 @@ function StarPoints({
   opacity,
   pointScale,
   minPointSize = 0.0,
+  constantSize = false,
 }) {
   const materialRef = useRef();
   const field = useMemo(
-    () => createPointField({ count, seed, bounds, scaleRange, speedRange, amplitudeRange }),
-    [count, seed, bounds, scaleRange, speedRange, amplitudeRange],
+    () => createSphericalPointField({ count, seed, radiusRange, scaleRange, speedRange, amplitudeRange }),
+    [count, seed, radiusRange, scaleRange, speedRange, amplitudeRange],
   );
 
   const uniforms = useMemo(() => ({
@@ -109,8 +144,9 @@ function StarPoints({
     uBaseOpacity: { value: opacity },
     uPointScale: { value: pointScale },
     uMinPointSize: { value: minPointSize },
+    uConstantSize: { value: constantSize ? 1 : 0 },
     uColor: { value: new THREE.Color(color) },
-  }), [color, minPointSize, opacity, pointScale]);
+  }), [color, constantSize, minPointSize, opacity, pointScale]);
 
   useFrame(({ clock }) => {
     if (materialRef.current) materialRef.current.uniforms.uTime.value = clock.elapsedTime;
@@ -140,53 +176,47 @@ function StarPoints({
 }
 
 function DeepStarField() {
-  const bounds = useMemo(() => ({
-    x: [-105, 105],
-    y: [-64, 64],
-    z: [-150, -28],
-  }), []);
-  const scaleRange = useMemo(() => [0.22, 0.72], []);
-  const speedRange = useMemo(() => [0.18, 0.7], []);
-  const amplitudeRange = useMemo(() => [0.01, 0.16], []);
+  const radiusRange = useMemo(() => [62, 150], []);
+  const scaleRange = useMemo(() => [0.18, 0.48], []);
+  const speedRange = useMemo(() => [0.06, 0.18], []);
+  const amplitudeRange = useMemo(() => [0.005, 0.04], []);
 
   return (
     <StarPoints
-      count={1800}
+      count={2200}
       seed={90421}
-      bounds={bounds}
+      radiusRange={radiusRange}
       scaleRange={scaleRange}
       speedRange={speedRange}
       amplitudeRange={amplitudeRange}
-      color="#f4f6ff"
-      opacity={0.88}
-      pointScale={5.2}
-      minPointSize={0.62}
+      color="#f7f8ff"
+      opacity={0.9}
+      pointScale={2.35}
+      minPointSize={0.55}
+      constantSize
     />
   );
 }
 
 function TwinkleStars() {
-  const bounds = useMemo(() => ({
-    x: [-34, 34],
-    y: [-22, 22],
-    z: [-62, -14],
-  }), []);
-  const scaleRange = useMemo(() => [0.34, 1.0], []);
-  const speedRange = useMemo(() => [0.45, 1.7], []);
-  const amplitudeRange = useMemo(() => [0.28, 0.78], []);
+  const radiusRange = useMemo(() => [34, 78], []);
+  const scaleRange = useMemo(() => [0.28, 0.62], []);
+  const speedRange = useMemo(() => [0.12, 0.42], []);
+  const amplitudeRange = useMemo(() => [0.06, 0.22], []);
 
   return (
     <StarPoints
-      count={150}
+      count={110}
       seed={17831}
-      bounds={bounds}
+      radiusRange={radiusRange}
       scaleRange={scaleRange}
       speedRange={speedRange}
       amplitudeRange={amplitudeRange}
-      color="#d9e0ff"
-      opacity={1}
-      pointScale={6.4}
-      minPointSize={0.9}
+      color="#e3e7ff"
+      opacity={0.96}
+      pointScale={3.2}
+      minPointSize={0.72}
+      constantSize
     />
   );
 }
@@ -231,6 +261,7 @@ function AmbientSpaceDust() {
     uBaseOpacity: { value: 0.18 },
     uPointScale: { value: 4.2 },
     uMinPointSize: { value: 0.0 },
+    uConstantSize: { value: 0 },
     uColor: { value: new THREE.Color('#bfc8e8') },
   }), []);
 
@@ -318,6 +349,7 @@ function ForegroundDust() {
     uBaseOpacity: { value: 0.08 },
     uPointScale: { value: 2.4 },
     uMinPointSize: { value: 0.0 },
+    uConstantSize: { value: 0 },
     uColor: { value: new THREE.Color('#e6eaff') },
   }), []);
 
@@ -380,33 +412,3 @@ export function SpaceWorld() {
   );
 }
 
-export function CameraFloatRig({ isZoomed }) {
-  const lookTarget = useMemo(() => CAMERA_LOOK.clone(), []);
-  const orientationHelper = useMemo(() => new THREE.Object3D(), []);
-
-  useFrame(({ camera, pointer, clock }, delta) => {
-    if (isZoomed) return;
-
-    const time = clock.elapsedTime;
-    const desiredPosition = new THREE.Vector3(
-      BASE_CAMERA.x + Math.sin(time * 0.53) * 0.024 + pointer.x * 0.028,
-      BASE_CAMERA.y + Math.sin(time * 0.41 + 1.2) * 0.018 + pointer.y * 0.02,
-      BASE_CAMERA.z + Math.sin(time * 0.31 + 0.4) * 0.012,
-    );
-
-    const positionAlpha = 1 - Math.exp(-1.8 * delta);
-    camera.position.lerp(desiredPosition, positionAlpha);
-
-    const desiredLook = lookTarget.clone();
-    desiredLook.x += pointer.x * 0.035;
-    desiredLook.y += pointer.y * 0.025;
-
-    orientationHelper.position.copy(camera.position);
-    orientationHelper.lookAt(desiredLook);
-
-    const rotationAlpha = 1 - Math.exp(-1.5 * delta);
-    camera.quaternion.slerp(orientationHelper.quaternion, rotationAlpha);
-  });
-
-  return null;
-}
