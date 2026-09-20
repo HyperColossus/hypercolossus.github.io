@@ -1,1 +1,0 @@
-import{i as e,n as t,s as n,t as r}from"./jsx-runtime-DCTxfirb.js";import{n as i}from"./standalone-cjkASAGv.js";var a=n(e(),1),o=n(t(),1),s=r();(0,o.createRoot)(document.getElementById(`root`)).render((0,s.jsx)(a.StrictMode,{children:(0,s.jsx)(i,{})}));
