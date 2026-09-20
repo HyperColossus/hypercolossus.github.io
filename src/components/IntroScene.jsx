@@ -48,7 +48,7 @@ function ComputerModel({ onClick, isZoomed, windowContext }) {
       onClick={!isZoomed ? (event) => { event.stopPropagation(); onClick(); } : undefined}>
       <Center><primitive object={model} scale={2} /></Center>
       <ScreenPortalGlow isZoomed={isZoomed} />
-      <SmartScreen>
+      <SmartScreen isPoweredOn={isZoomed}>
         <div style={{ width: 800, height: 600 }} className="os-desktop overflow-hidden rounded-[32px] bg-zinc-900 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
           <WindowContext.Provider value={windowContext}><Desktop /></WindowContext.Provider>
         </div>
@@ -78,33 +78,12 @@ function IntroExperience() {
       <SceneBoundary fallback={fallback}>
         <Canvas shadows={{ type: THREE.VSMShadowMap }} dpr={[1, 1.5]} camera={{ position: [1.35, 0.82, 2.45], fov: 40 }} fallback={null}>
           <color attach="background" args={[BG_COLOR]} />
-          <ambientLight intensity={0.18} />
-          <hemisphereLight args={['#dfe7ff', '#000000', 0.72]} />
+          <ambientLight intensity={0.11} />
+          <hemisphereLight args={['#9aa8cf', '#000000', 0.42]} />
 
-          {/* Broad hero key: large, soft pool of light centered on the computer. */}
-          <spotLight
-            position={[0.15, 6.8, 5.4]}
-            color="#ffffff"
-            intensity={150}
-            angle={0.82}
-            penumbra={0.9}
-            decay={1.35}
-            distance={26}
-            castShadow
-            shadow-mapSize={[2048, 2048]}
-            shadow-radius={7}
-            shadow-blurSamples={12}
-            shadow-bias={-0.00025}
-            shadow-normalBias={0.02}
-          />
-
-          {/* Screen-side glow keeps the face readable against pitch black. */}
-          <pointLight position={[-0.08, 0.15, 1.05]} color="#9fb1ff" intensity={12} distance={4.5} decay={2} />
-
-          {/* Soft front fill and a cool rim separate the silhouette from space. */}
-          <pointLight position={[1.9, 1.4, 3.5]} color="#ffffff" intensity={22} distance={9} decay={2} />
-          <directionalLight position={[3.5, 2.4, 3]} color="#c7d3ff" intensity={1.5} />
-          <directionalLight position={[-3.5, 1.6, -2]} color="#6576b4" intensity={1.15} />
+          {/* Minimal edge lighting only; the CRT is now the visual light source. */}
+          <directionalLight position={[3.8, 2.7, 2.4]} color="#9eadde" intensity={0.72} />
+          <directionalLight position={[-3.8, 1.8, -2.8]} color="#55628f" intensity={0.58} />
           <SpaceWorld />
           <React.Suspense fallback={<Html center><p className="whitespace-nowrap text-white" role="status">Loading computer…</p></Html>}>
             <ComputerModel onClick={() => setIsZoomed(true)} isZoomed={isZoomed} windowContext={windowContext} />
@@ -186,22 +165,23 @@ function ScreenPortalGlow({ isZoomed }) {
 
   useFrame((_, delta) => {
     const target = isZoomed ? 1 : 0;
-    const speed = isZoomed ? 1 / TRANSITION_DURATION : 4;
-    progressRef.current = THREE.MathUtils.damp(progressRef.current, target, speed * 6, delta);
+    progressRef.current = THREE.MathUtils.damp(progressRef.current, target, isZoomed ? 7 : 4, delta);
 
     const progress = progressRef.current;
-    const flare = Math.sin(Math.min(progress * 1.75, 1) * Math.PI);
-    const afterglow = Math.max(0, 1 - progress) * 0.12;
+    const bootPulse = Math.sin(Math.min(progress * 1.55, 1) * Math.PI);
+    const idlePulse = 0.5 + Math.sin(performance.now() * 0.0014) * 0.5;
 
     if (innerRef.current) {
-      innerRef.current.material.opacity = flare * 0.42 + afterglow;
-      const scale = 1 + progress * 0.45;
+      const idleOpacity = isZoomed ? 0 : 0.08 + idlePulse * 0.025;
+      innerRef.current.material.opacity = idleOpacity + bootPulse * 0.38;
+      const scale = isZoomed ? 1 + progress * 0.34 : 1.02 + idlePulse * 0.015;
       innerRef.current.scale.setScalar(scale);
     }
 
     if (outerRef.current) {
-      outerRef.current.material.opacity = flare * 0.16 + afterglow * 0.45;
-      const scale = 1.08 + progress * 0.8;
+      const idleOpacity = isZoomed ? 0 : 0.035 + idlePulse * 0.012;
+      outerRef.current.material.opacity = idleOpacity + bootPulse * 0.13;
+      const scale = isZoomed ? 1.08 + progress * 0.72 : 1.08 + idlePulse * 0.02;
       outerRef.current.scale.setScalar(scale);
     }
   });
@@ -209,9 +189,9 @@ function ScreenPortalGlow({ isZoomed }) {
   return (
     <group position={SCREEN} rotation={SCREEN_ROTATION}>
       <mesh ref={outerRef} position={[0, 0, -0.018]} renderOrder={1}>
-        <planeGeometry args={[SCREEN_WIDTH * 1.34, SCREEN_HEIGHT * 1.34]} />
+        <planeGeometry args={[SCREEN_WIDTH * 1.38, SCREEN_HEIGHT * 1.38]} />
         <meshBasicMaterial
-          color="#7186ff"
+          color="#5865f2"
           transparent
           opacity={0}
           depthWrite={false}
@@ -220,9 +200,9 @@ function ScreenPortalGlow({ isZoomed }) {
         />
       </mesh>
       <mesh ref={innerRef} position={[0, 0, -0.012]} renderOrder={2}>
-        <planeGeometry args={[SCREEN_WIDTH * 1.08, SCREEN_HEIGHT * 1.08]} />
+        <planeGeometry args={[SCREEN_WIDTH * 1.1, SCREEN_HEIGHT * 1.1]} />
         <meshBasicMaterial
-          color="#dbe3ff"
+          color="#c9d2ff"
           transparent
           opacity={0}
           depthWrite={false}
@@ -234,7 +214,7 @@ function ScreenPortalGlow({ isZoomed }) {
   );
 }
 
-function SmartScreen({ children }) {
+function SmartScreen({ children, isPoweredOn }) {
   const groupRef = useRef();
   const htmlContainerRef = useRef();
 
@@ -262,7 +242,14 @@ function SmartScreen({ children }) {
     <group ref={groupRef} position={SCREEN} rotation={SCREEN_ROTATION}>
       <Html transform wrapperClass="os-screen" distanceFactor={0.2125} zIndexRange={[100, 0]}>
         <div ref={htmlContainerRef}>
-          {children}
+          <div className={`crt-screen-shell ${isPoweredOn ? 'is-powering-on' : 'is-idle'}`}>
+            <div className="crt-screen-content">{children}</div>
+            <div className="crt-blackout" aria-hidden="true" />
+            <div className="crt-power-line" aria-hidden="true" />
+            <div className="crt-phosphor-flash" aria-hidden="true" />
+            <div className="crt-scanlines" aria-hidden="true" />
+            <div className="crt-glass" aria-hidden="true" />
+          </div>
         </div>
       </Html>
     </group>
