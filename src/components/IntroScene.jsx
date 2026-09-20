@@ -72,43 +72,50 @@ function IntroExperience() {
   return (
     <div className="absolute inset-0 h-dvh w-full" style={{ backgroundColor: BG_COLOR }}>
       <SceneBoundary fallback={fallback}>
-        <Canvas shadows={{ type: THREE.VSMShadowMap }} dpr={[1, 1.5]} camera={{ position: [1.55, 1.1, 2.15], fov: 45 }} fallback={null}>
+        <Canvas shadows={{ type: THREE.VSMShadowMap }} dpr={[1, 1.5]} camera={{ position: [1.35, 0.82, 2.45], fov: 40 }} fallback={null}>
           <color attach="background" args={[BG_COLOR]} />
-          <ambientLight intensity={0.22} />
-          <hemisphereLight args={['#dbe4ff', '#050509', 0.8]} />
+          <ambientLight intensity={0.18} />
+          <hemisphereLight args={['#dfe7ff', '#000000', 0.72]} />
+
+          {/* Broad hero key: large, soft pool of light centered on the computer. */}
           <spotLight
-            position={[0.25, 5.8, 4.2]}
-            color="#f4f7ff"
-            intensity={115}
-            angle={0.9}
-            penumbra={0.82}
-            decay={1.45}
-            distance={22}
+            position={[0.15, 6.8, 5.4]}
+            color="#ffffff"
+            intensity={150}
+            angle={0.82}
+            penumbra={0.9}
+            decay={1.35}
+            distance={26}
             castShadow
             shadow-mapSize={[2048, 2048]}
-            shadow-radius={6}
-            shadow-blurSamples={10}
+            shadow-radius={7}
+            shadow-blurSamples={12}
             shadow-bias={-0.00025}
             shadow-normalBias={0.02}
           />
-          <pointLight position={[0.6, 1.2, 2.8]} color="#ffffff" intensity={20} distance={8} decay={2} />
-          <directionalLight position={[3, 2, 3]} color="#b8c7ff" intensity={1.6} />
-          <directionalLight position={[-3, 1, 2]} color="#45557e" intensity={0.7} />
+
+          {/* Screen-side glow keeps the face readable against pitch black. */}
+          <pointLight position={[-0.08, 0.15, 1.05]} color="#9fb1ff" intensity={12} distance={4.5} decay={2} />
+
+          {/* Soft front fill and a cool rim separate the silhouette from space. */}
+          <pointLight position={[1.9, 1.4, 3.5]} color="#ffffff" intensity={22} distance={9} decay={2} />
+          <directionalLight position={[3.5, 2.4, 3]} color="#c7d3ff" intensity={1.5} />
+          <directionalLight position={[-3.5, 1.6, -2]} color="#6576b4" intensity={1.15} />
           <SpaceWorld />
           <React.Suspense fallback={<Html center><p className="whitespace-nowrap text-white" role="status">Loading computer…</p></Html>}>
             <ComputerModel onClick={() => setIsZoomed(true)} isZoomed={isZoomed} windowContext={windowContext} />
           </React.Suspense>
           <OrbitControls
             enabled={!isZoomed}
-            target={[0, 0.02, 0]}
+            target={[0, 0.04, 0]}
             enablePan={false}
             enableZoom
             enableDamping
-            dampingFactor={0.055}
-            rotateSpeed={0.45}
-            zoomSpeed={0.6}
-            minDistance={1.8}
-            maxDistance={5.5}
+            dampingFactor={0.07}
+            rotateSpeed={0.4}
+            zoomSpeed={0.5}
+            minDistance={1.95}
+            maxDistance={5.2}
             minPolarAngle={Math.PI * 0.2}
             maxPolarAngle={Math.PI * 0.72}
           />
