@@ -9,10 +9,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        portfolio: resolve(__dirname, 'portfolio.html'),
-        games: resolve(__dirname, 'games.html'),
-        lab: resolve(__dirname, 'lab.html'),
+        main: resolve(import.meta.dirname, 'index.html'),
+        portfolio: resolve(import.meta.dirname, 'portfolio.html'),
+        games: resolve(import.meta.dirname, 'games.html'),
+        lab: resolve(import.meta.dirname, 'lab.html'),
       },
     },
   },
