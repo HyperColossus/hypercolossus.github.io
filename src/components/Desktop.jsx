@@ -34,7 +34,7 @@ export default function Desktop() {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
-  const runningApps = desktopConfig.filter(app => windows.some(win => win.id === app.id));
+  const dockApps = desktopConfig.filter(app => !app.folder);
   return <div className="studio-desktop">
     <div className="desktop-wallpaper" aria-hidden="true">
       <div className="wallpaper-depth wallpaper-depth-far" />
@@ -47,7 +47,7 @@ export default function Desktop() {
       <div className="wallpaper-depth wallpaper-depth-near" />
       <div className="wallpaper-vignette" />
     </div>
-    <header className="desktop-menubar"><span className="desktop-brand"><span className="brand-mark">ZS</span> Personal desktop</span><span className="desktop-edition">A little bit of everything.</span><time dateTime={time.toISOString()}>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time></header>
+    <header className="desktop-menubar"><span className="desktop-brand"><span className="brand-mark">ZS</span><span>ZACK SIEGEL</span></span><span className="desktop-edition">PORTFOLIO SYSTEM / 2026</span><time dateTime={time.toISOString()}>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time></header>
     <div ref={desktopRef} className="desktop-workspace">
       <div className="desktop-shortcuts">{desktopConfig.filter(app => !app.folder).map(app => {
         const Icon = ICON_MAP[app.icon];
@@ -57,9 +57,9 @@ export default function Desktop() {
       <span className="desktop-caption">SOCIAL / GAMES / VIDEO</span>
       {windows.map(win => { const AppComponent = APP_MAP[win.appName]; return <Window key={win.id} windowData={win} desktopRef={desktopRef} desktopSize={desktopSize}>{AppComponent ? <AppComponent /> : <p>App not found</p>}</Window>; })}
     </div>
-    {runningApps.length > 0 && <footer className="desktop-dock-area"><div className="desktop-dock" role="group" aria-label="Open apps">
-      {runningApps.map(app => { const Icon = ICON_MAP[app.icon]; const win = windows.find(item => item.id === app.id); const active = activeWindow === app.id && !win.minimized;
-        return <button key={app.id} className={`dock-app ${active ? 'is-active' : ''}`} aria-label={`Taskbar ${app.label}`} aria-pressed={active} title={app.shortLabel} onClick={() => active ? minimizeWindow(app.id) : focusWindow(app.id)}><Icon size={23} strokeWidth={1.5} aria-hidden="true" /><span className="dock-tooltip" aria-hidden="true">{app.shortLabel}</span><i className="running-dot" /></button>;
-      })}</div></footer>}
+    <footer className="desktop-dock-area"><div className="desktop-dock" role="group" aria-label="Applications">
+      {dockApps.map(app => { const Icon = ICON_MAP[app.icon]; const win = windows.find(item => item.id === app.id); const running = Boolean(win); const active = activeWindow === app.id && running && !win.minimized;
+        return <button key={app.id} className={`dock-app ${active ? 'is-active' : ''} ${running ? 'is-running' : ''}`} aria-label={app.label} aria-pressed={active} title={app.shortLabel} onClick={() => active ? minimizeWindow(app.id) : running ? focusWindow(app.id) : openWindow(app)}><Icon size={21} strokeWidth={1.5} aria-hidden="true" /><span className="dock-tooltip" aria-hidden="true">{app.shortLabel}</span>{running && <i className="running-dot" />}</button>;
+      })}</div></footer>
   </div>;
 }
