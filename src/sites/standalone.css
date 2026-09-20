@@ -1426,3 +1426,20 @@ button { font: inherit; }
     gap: 6px;
   }
 }
+
+
+/* Empty standalone canvases ready for content population. */
+.empty-site-canvas {
+  min-height: calc(100vh - 76px);
+  background: #fff;
+}
+
+.empty-site-canvas-dark {
+  background: #0c101b;
+}
+
+.standalone-footer-empty {
+  min-height: 84px;
+  grid-template-columns: auto;
+  justify-content: flex-start;
+}
