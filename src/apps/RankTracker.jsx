@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
 export default function RankTracker() {
   const [activeTab, setActiveTab] = useState('overview');
