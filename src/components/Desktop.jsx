@@ -52,8 +52,16 @@ export default function Desktop() {
         const Icon = ICON_MAP[app.icon];
         return <button key={app.id} className={`desktop-shortcut shortcut-${app.id}`} onClick={() => openWindow(app)}><span className="shortcut-icon"><Icon size={25} strokeWidth={1.35} aria-hidden="true" /></span><span>{app.label}</span></button>;
       })}</div>
-      <div className="desktop-welcome"><p className="eyebrow">Welcome to my corner of the internet</p><h1>Curiosity,<br />on <em>display.</em></h1><p>I’m Zack. I make things for screens.<br />Pick an app. Have a look around.</p><button className="studio-button" onClick={() => openWindow(desktopConfig[0])}>Meet the human <ArrowUpRight size={16} /></button></div>
-      <span className="desktop-caption">SOCIAL / GAMES / VIDEO</span>
+      <section className="desktop-welcome">
+        <p className="desktop-system-label">ZACHARY SIEGEL / INTERACTIVE PORTFOLIO</p>
+        <h1>Work across <span>design, code, and story.</span></h1>
+        <p>A desktop for the things I build. Open a project, move things around, and explore at your own pace.</p>
+        <div className="desktop-welcome-actions">
+          <button className="studio-button" onClick={() => openWindow(desktopConfig[0])}>Open portfolio <ArrowUpRight size={15} /></button>
+          <span>3 applications · drag windows freely</span>
+        </div>
+      </section>
+      <span className="desktop-caption">DESIGN / DEVELOPMENT / VIDEO</span>
       {windows.map(win => { const AppComponent = APP_MAP[win.appName]; return <Window key={win.id} windowData={win} desktopRef={desktopRef} desktopSize={desktopSize}>{AppComponent ? <AppComponent /> : <p>App not found</p>}</Window>; })}
     </div>
     <footer className="desktop-dock-area"><div className="desktop-dock" role="group" aria-label="Applications">
