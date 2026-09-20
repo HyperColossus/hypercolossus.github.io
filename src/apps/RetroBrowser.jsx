@@ -37,7 +37,7 @@ export default function RetroBrowser() {
       </div></section>}
       {page === 'weblog' && <section className="portfolio-page"><p className="eyebrow">02 / Notes from the desktop</p><h1>A work<br />in <em>progress.</em></h1><article className="journal-entry"><time>SEPTEMBER 2026</time><h2>A familiar computer. A fresh perspective.</h2><p>This corner of the internet is taking shape: a retro computer, a few small apps, and a home for the things I make.</p></article></section>}
       {page === 'guestbook' && <section className="portfolio-page"><p className="eyebrow">03 / You were here</p><h1>Leave a little<br /><em>hello.</em></h1><div className="guestbook-note"><span>✳</span><h2>A space for passing visitors.</h2><p>The guestbook is still being built. In the meantime, my inbox is open.</p><a className="studio-button" href="mailto:dzjwarior1@gmail.com">Say hello <ArrowUpRight size={16} /></a></div></section>}
-      <footer className="portfolio-footer"><span>Thanks for stopping by.</span><a href="https://github.com/HyperColossus" target="_blank" rel="noreferrer">GitHub <ArrowUpRight size={13} /></a><a href="mailto:dzjwarior1@gmail.com">Get in touch <ArrowUpRight size={13} /></a></footer>
+      <footer className="portfolio-footer"><span>Thanks for stopping by.</span><a href="https://github.com/HyperColossus" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={13} /></a><a href="mailto:dzjwarior1@gmail.com">Get in touch <ArrowUpRight size={13} /></a></footer>
     </div>
   </div>;
 }
