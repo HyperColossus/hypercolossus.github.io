@@ -10,7 +10,7 @@ import { CameraFloatRig, SpaceWorld } from './SpaceWorld.jsx';
 
 const SCREEN = new THREE.Vector3(-0.079, 0.085, 0.312);
 const SCREEN_ROTATION = new THREE.Euler(-0.08, 0, 0);
-const BG_COLOR = '#070816';
+const BG_COLOR = '#010106';
 
 function ComputerModel({ onClick, isZoomed, windowContext }) {
   const groupRef = useRef();
@@ -74,7 +74,6 @@ function IntroExperience() {
       <SceneBoundary fallback={fallback}>
         <Canvas shadows={{ type: THREE.VSMShadowMap }} dpr={[1, 1.5]} camera={{ position: [1.55, 1.1, 2.15], fov: 45 }} fallback={null}>
           <color attach="background" args={[BG_COLOR]} />
-          <AnimatedFog isZoomed={isZoomed} />
           <ambientLight intensity={0.15} />
           <hemisphereLight args={['#9fb7cc', '#231a29', 0.65]} />
           <spotLight position={[-1.8, 3.5, 2]} color="#e0f0ff" intensity={35}
@@ -107,17 +106,6 @@ function CameraZoomRig({ isZoomed }) {
     camera.quaternion.slerp(new THREE.Quaternion().setFromEuler(SCREEN_ROTATION), alpha);
   });
   return null;
-}
-
-function AnimatedFog({ isZoomed }) {
-  useFrame(({ scene }, delta) => {
-    const targetDensity = isZoomed ? 0.42 : 0.028;
-    const alpha = 1 - Math.exp(-3 * delta);
-    if (scene.fog) {
-      scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, targetDensity, alpha);
-    }
-  });
-  return <fogExp2 attach="fog" args={[BG_COLOR, 0.028]} />;
 }
 
 function SmartScreen({ children }) {
