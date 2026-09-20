@@ -1,15 +1,16 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useCursor, useGLTF, Center, ContactShadows, OrbitControls, Html, Sparkles } from '@react-three/drei';
+import { useCursor, useGLTF, Center, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { Power } from 'lucide-react';
 import Desktop from './Desktop';
 import { WindowProvider } from '../WindowContext.jsx';
 import { WindowContext, useWindows } from '../useWindows';
+import { CameraFloatRig, SpaceWorld } from './SpaceWorld.jsx';
 
 const SCREEN = new THREE.Vector3(-0.079, 0.085, 0.312);
 const SCREEN_ROTATION = new THREE.Euler(-0.08, 0, 0);
-const BG_COLOR = '#000000';
+const BG_COLOR = '#070816';
 
 function ComputerModel({ onClick, isZoomed, windowContext }) {
   const groupRef = useRef();
@@ -28,10 +29,16 @@ function ComputerModel({ onClick, isZoomed, windowContext }) {
   }, [scene]);
   useCursor(!isZoomed && hovered);
   useFrame((state, delta) => {
-    if (groupRef.current) {
-      const target = isZoomed ? 0 : Math.sin(state.clock.elapsedTime * 2) * 0.025;
-      groupRef.current.position.y = THREE.MathUtils.damp(groupRef.current.position.y, target, 8, delta);
-    }
+    if (!groupRef.current) return;
+
+    const time = state.clock.elapsedTime;
+    const targetY = isZoomed ? 0 : Math.sin(time * 0.72) * 0.018;
+    const targetYaw = isZoomed ? 0 : Math.sin(time * 0.41 + 0.8) * THREE.MathUtils.degToRad(0.55);
+    const targetPitch = isZoomed ? 0 : Math.sin(time * 0.34 + 1.7) * THREE.MathUtils.degToRad(0.28);
+
+    groupRef.current.position.y = THREE.MathUtils.damp(groupRef.current.position.y, targetY, 3.2, delta);
+    groupRef.current.rotation.y = THREE.MathUtils.damp(groupRef.current.rotation.y, targetYaw, 2.6, delta);
+    groupRef.current.rotation.x = THREE.MathUtils.damp(groupRef.current.rotation.x, targetPitch, 2.4, delta);
   });
   return (
     <group ref={groupRef} onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}
@@ -76,21 +83,14 @@ function IntroExperience() {
             shadow-bias={-0.0003} shadow-normalBias={0.015} />
           <directionalLight position={[2, 1.5, -3]} color="#aab7cc" intensity={1.5} />
           <directionalLight position={[-3, 1, 3]} color="#556688" intensity={0.55} />
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.3, 0]} receiveShadow>
-            <planeGeometry args={[200, 200]} />
-            <meshStandardMaterial color="#c2410c" roughness={0.96} metalness={0.1} />
-          </mesh>
-          <ContactShadows position={[0, -0.295, 0]} opacity={0.8} scale={5} blur={2.8} far={1.5} color="#050302" />
-          <Sparkles count={400} scale={[15, 10, 15]} position={[0, 2, -2]}
-            size={1.8} speed={0.4} opacity={0.6} color="#ffffff" raycast={() => null} />
+          <SpaceWorld />
           <React.Suspense fallback={<Html center><p className="whitespace-nowrap text-white" role="status">Loading computer…</p></Html>}>
             <ComputerModel onClick={() => setIsZoomed(true)} isZoomed={isZoomed} windowContext={windowContext} />
           </React.Suspense>
-          <OrbitControls enabled={!isZoomed} enablePan={false}
-            minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 2 - 0.1} minDistance={1.5} maxDistance={6} />
+          <CameraFloatRig isZoomed={isZoomed} />
           <CameraZoomRig isZoomed={isZoomed} />
         </Canvas>
-        {!isZoomed && <div className="intro-footer"><div><p className="eyebrow">A familiar place. A few new ideas.</p><h1>Make yourself <em>at home.</em></h1><p>An interactive portfolio by Zack Siegel.</p></div><div className="intro-actions"><span>DRAG TO LOOK AROUND</span><button className="studio-button" onClick={() => setIsZoomed(true)}><Power size={14} />Start computer</button></div></div>}
+        {!isZoomed && <div className="intro-footer"><div><p className="eyebrow">A familiar place. A few new ideas.</p><h1>Make yourself <em>at home.</em></h1><p>An interactive portfolio by Zack Siegel.</p></div><div className="intro-actions"><span>MOVE TO LOOK AROUND</span><button className="studio-button" onClick={() => setIsZoomed(true)}><Power size={14} />Start computer</button></div></div>}
       </SceneBoundary>
     </div>
   );
@@ -111,13 +111,13 @@ function CameraZoomRig({ isZoomed }) {
 
 function AnimatedFog({ isZoomed }) {
   useFrame(({ scene }, delta) => {
-    const targetDensity = isZoomed ? 0.7 : 0.15;
+    const targetDensity = isZoomed ? 0.42 : 0.028;
     const alpha = 1 - Math.exp(-3 * delta);
     if (scene.fog) {
       scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, targetDensity, alpha);
     }
   });
-  return <fogExp2 attach="fog" args={[BG_COLOR, 0.15]} />;
+  return <fogExp2 attach="fog" args={[BG_COLOR, 0.028]} />;
 }
 
 function SmartScreen({ children }) {
