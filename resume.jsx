@@ -344,8 +344,8 @@ function ResumeTweaks({ t, setTweak }) {
 
 // ---------- APP ----------
 function App() {
-  const useTweaks = window.useTweaks;
-  const [t, setTweak] = useTweaks ? useTweaks(DEFAULTS) : [DEFAULTS, () => {}];
+  const useTweaks = window.useTweaks || (() => [DEFAULTS, () => {}]);
+  const [t, setTweak] = useTweaks(DEFAULTS);
   return (
     <>
       <div className="stage">

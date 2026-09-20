@@ -19,7 +19,22 @@ jobs:
 
     steps:
       - name: Check out pull request
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22.12.0'
+          cache: npm
+
+      - name: Prepare preview site
+        shell: bash
+        run: |
+          rm -rf _preview_site
+          mkdir -p _preview_site
+          npm ci
+          npm run build -- --base="/pr-preview/pr-${{ github.event.pull_request.number }}/"
+          cp -a dist/. _preview_site/
 
       - name: Prepare preview site
         shell: bash
