@@ -1,11 +1,10 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useWindows } from '../useWindows';
 import { desktopConfig } from '../desktopConfig';
-import { Folder, Joystick, ChartNoAxesCombined, ArrowUpRight } from 'lucide-react';
+import { Folder, Joystick, ArrowUpRight } from 'lucide-react';
 import Window from './Window';
 import RetroBrowser from '../apps/RetroBrowser';
 import RetroSteam from '../apps/RetroSteam';
-import RankTracker from '../apps/RankTracker';
 import SideProjects from '../apps/SideProjects';
 
 function ExplorerIcon({ size = 25 }) {
@@ -14,8 +13,8 @@ function ExplorerIcon({ size = 25 }) {
     <ellipse cx="16" cy="17" rx="15" ry="7" transform="rotate(-35 16 17)" stroke="currentColor" strokeWidth="1.25" />
   </svg>;
 }
-const ICON_MAP = { browser: ExplorerIcon, gamepad: Joystick, chart: ChartNoAxesCombined, folder: Folder };
-const APP_MAP = { RetroBrowser, RetroSteam, RankTracker, SideProjects };
+const ICON_MAP = { browser: ExplorerIcon, gamepad: Joystick, folder: Folder };
+const APP_MAP = { RetroBrowser, RetroSteam, SideProjects };
 
 export default function Desktop() {
   const { windows, openWindow, activeWindow, focusWindow, minimizeWindow } = useWindows();
