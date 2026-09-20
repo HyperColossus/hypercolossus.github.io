@@ -1,43 +1,341 @@
 import React, { useRef, useState } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight, RotateCw, LockKeyhole, Gamepad2, Clapperboard, Radio } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  RotateCw,
+  LockKeyhole,
+  Gamepad2,
+  Clapperboard,
+  Radio,
+  Code2,
+  Layers3,
+  Mail,
+  Github,
+} from 'lucide-react';
 import { useWindows } from '../useWindows';
 import { desktopConfig } from '../desktopConfig';
-const pages = { about: 'About', projects: 'Selected work', weblog: 'Notes', guestbook: 'Guestbook' };
-const crafts = [
-  { icon: Radio, title: 'Social & esports', text: 'Content systems, match-day moments, and stories that bring a community together.', detail: 'watchNACL / LPL English' },
-  { icon: Gamepad2, title: 'Games & interactive', text: 'Playable ideas. Curious worlds. That feeling when a mechanic finally clicks.', detail: 'Game design / Creative development' },
-  { icon: Clapperboard, title: 'Video & motion', text: 'The right rhythm, a good story, and the cut you didn’t see coming.', detail: 'Editing / Short-form / Thumbnails' },
+
+const pages = {
+  overview: 'Overview',
+  work: 'Work',
+  about: 'About',
+  contact: 'Contact',
+};
+
+const capabilities = [
+  {
+    icon: Radio,
+    label: 'Social & esports',
+    title: 'Community-first content systems',
+    text: 'Match-day storytelling, social formats, and editorial ideas designed around the way fans actually follow competition.',
+    detail: 'watchNACL / LPL English',
+  },
+  {
+    icon: Gamepad2,
+    label: 'Games & interactive',
+    title: 'Playable ideas with a strong point of view',
+    text: 'Game concepts, interaction design, and creative development focused on making mechanics feel understandable and memorable.',
+    detail: 'Hollow Field / Splice',
+  },
+  {
+    icon: Clapperboard,
+    label: 'Video & motion',
+    title: 'Editing built around rhythm and clarity',
+    text: 'Gaming videos, shorts, thumbnails, and motion work shaped to communicate quickly without losing personality.',
+    detail: 'Creator content / SamIsDual',
+  },
 ];
+
+const workItems = [
+  {
+    id: 'esports',
+    number: '01',
+    eyebrow: 'SOCIAL & ESPORTS',
+    title: 'Stories beyond the scoreboard.',
+    client: 'watchNACL / LPL English',
+    text: 'Content systems and community storytelling built around the moments, personalities, and context that make competition worth following.',
+    tags: ['Social strategy', 'Editorial', 'Community'],
+    icon: Radio,
+  },
+  {
+    id: 'games',
+    number: '02',
+    eyebrow: 'GAMES & INTERACTIVE',
+    title: 'Small worlds with something to discover.',
+    client: 'Hollow Field / Splice',
+    text: 'Original game projects exploring procedural spaces, cooperative mechanics, and the satisfaction of figuring something out for yourself.',
+    tags: ['Game design', 'Interaction', 'Creative development'],
+    icon: Gamepad2,
+    opensApp: 'games',
+  },
+  {
+    id: 'video',
+    number: '03',
+    eyebrow: 'VIDEO & MOTION',
+    title: 'Editing that knows when to get out of the way.',
+    client: 'Creator video systems',
+    text: 'Gaming videos, short-form edits, and visual packaging designed around pacing, clarity, and the identity of the creator.',
+    tags: ['Editing', 'Short-form', 'Thumbnails'],
+    icon: Clapperboard,
+  },
+];
+
+function WorkCard({ item, onOpen }) {
+  const Icon = item.icon;
+  const content = (
+    <>
+      <div className="professional-work-visual" data-project={item.id}>
+        <span className="professional-work-number">{item.number}</span>
+        <Icon size={28} strokeWidth={1.25} aria-hidden="true" />
+        <span>{item.client}</span>
+      </div>
+      <div className="professional-work-copy">
+        <p className="professional-kicker">{item.eyebrow}</p>
+        <h3>{item.title}</h3>
+        <p>{item.text}</p>
+        <div className="professional-tags">{item.tags.map(tag => <span key={tag}>{tag}</span>)}</div>
+      </div>
+      <ArrowUpRight className="professional-work-arrow" size={18} aria-hidden="true" />
+    </>
+  );
+
+  if (item.opensApp) {
+    return <button className="professional-work-card is-action" onClick={onOpen}>{content}</button>;
+  }
+
+  return <article className="professional-work-card">{content}</article>;
+}
+
 export default function RetroBrowser() {
-  const [history, setHistory] = useState({ entries: ['about'], index: 0 });
+  const [history, setHistory] = useState({ entries: ['overview'], index: 0 });
   const page = history.entries[history.index];
   const contentRef = useRef(null);
   const { openWindow } = useWindows();
+
   const navigate = next => {
-    if (next !== page) setHistory(prev => ({ entries: [...prev.entries.slice(0, prev.index + 1), next], index: prev.index + 1 }));
-    contentRef.current?.scrollTo(0, 0);
+    if (next !== page) {
+      setHistory(prev => ({
+        entries: [...prev.entries.slice(0, prev.index + 1), next],
+        index: prev.index + 1,
+      }));
+    }
+    contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
   const move = delta => {
-    setHistory(prev => ({ ...prev, index: Math.max(0, Math.min(prev.entries.length - 1, prev.index + delta)) }));
-    contentRef.current?.scrollTo(0, 0);
+    setHistory(prev => ({
+      ...prev,
+      index: Math.max(0, Math.min(prev.entries.length - 1, prev.index + delta)),
+    }));
+    contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   };
-  return <div className="portfolio-browser">
-    <div className="browser-toolbar"><button aria-label="Back" disabled={history.index === 0} onClick={() => move(-1)}><ArrowLeft size={16} /></button><button aria-label="Forward" disabled={history.index === history.entries.length - 1} onClick={() => move(1)}><ArrowRight size={16} /></button><button aria-label="Scroll to top" onClick={() => contentRef.current?.scrollTo(0, 0)}><RotateCw size={14} /></button><div className="browser-address"><LockKeyhole size={12} /><span>zack / <strong>{page}</strong></span><span className="address-label">PERSONAL SITE</span></div></div>
-    <div className="portfolio-scroll" ref={contentRef}>
-      <div className="portfolio-masthead"><span className="wordmark">Zachary Siegel<span>®</span></span><span className="eyebrow">Independent by nature.</span></div>
-      <nav className="portfolio-nav" aria-label="Homepage navigation">{Object.entries(pages).map(([id, label]) => <button key={id} aria-current={page === id ? 'page' : undefined} onClick={() => navigate(id)}>{label}</button>)}</nav>
-      {page === 'about' && <>
-        <section className="portfolio-hero"><p className="eyebrow"><span className="accent-dot" /> Social. Games. Video.</p><h1>Made to make<br />you <em>feel something.</em></h1><p className="hero-intro">Hi, I’m Zack. I work across three crafts that all start with the same question: how do you make people feel something on a screen?</p><button className="studio-button" onClick={() => navigate('projects')}>Explore my work <ArrowUpRight size={16} /></button><span className="hero-asterisk" aria-hidden="true">✳</span></section>
-        <section className="craft-section"><div className="section-heading"><span className="eyebrow">01 / A few things I do</span><span>Different mediums. Same instinct.</span></div><div className="craft-grid">{crafts.map(({ icon: Icon, title, text, detail }) => <article key={title}><Icon size={23} strokeWidth={1.5} /><h2>{title}</h2><p>{text}</p><small>{detail}</small></article>)}</div></section>
-      </>}
-      {page === 'projects' && <section className="portfolio-page"><p className="eyebrow">01 / Selected work</p><h1>Ideas, out<br />in the <em>world.</em></h1><p>A mix of community, craft, and a little experimentation.</p><div className="work-list">
-        <article><span className="work-number">01</span><div><small>SOCIAL & ESPORTS</small><h2>Stories beyond the scoreboard.</h2><p>Social content and community storytelling for watchNACL and LPL English.</p></div><Radio size={24} /></article>
-        <button onClick={() => openWindow(desktopConfig.find(app => app.id === 'games'))}><span className="work-number">02</span><div><small>GAMES & INTERACTIVE</small><h2>Small worlds. Big curiosity.</h2><p>Explore Hollow Field and Splice in the game library.</p></div><ArrowUpRight size={24} /></button>
-        <article><span className="work-number">03</span><div><small>VIDEO & MOTION</small><h2>Find the rhythm.</h2><p>Gaming videos, shorts, and thumbnails for creators including SamIsDual.</p></div><Clapperboard size={24} /></article>
-      </div></section>}
-      {page === 'weblog' && <section className="portfolio-page"><p className="eyebrow">02 / Notes from the desktop</p><h1>A work<br />in <em>progress.</em></h1><article className="journal-entry"><time>SEPTEMBER 2026</time><h2>A familiar computer. A fresh perspective.</h2><p>This corner of the internet is taking shape: a retro computer, a few small apps, and a home for the things I make.</p></article></section>}
-      {page === 'guestbook' && <section className="portfolio-page"><p className="eyebrow">03 / You were here</p><h1>Leave a little<br /><em>hello.</em></h1><div className="guestbook-note"><span>✳</span><h2>A space for passing visitors.</h2><p>The guestbook is still being built. In the meantime, my inbox is open.</p><a className="studio-button" href="mailto:dzjwarior1@gmail.com">Say hello <ArrowUpRight size={16} /></a></div></section>}
-      <footer className="portfolio-footer"><span>Thanks for stopping by.</span><a href="https://github.com/HyperColossus" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={13} /></a><a href="mailto:dzjwarior1@gmail.com">Get in touch <ArrowUpRight size={13} /></a></footer>
+
+  const openGames = () => {
+    const gamesApp = desktopConfig.find(app => app.id === 'games');
+    if (gamesApp) openWindow(gamesApp);
+  };
+
+  return (
+    <div className="portfolio-browser professional-browser">
+      <div className="browser-toolbar">
+        <button aria-label="Back" disabled={history.index === 0} onClick={() => move(-1)}><ArrowLeft size={15} /></button>
+        <button aria-label="Forward" disabled={history.index === history.entries.length - 1} onClick={() => move(1)}><ArrowRight size={15} /></button>
+        <button aria-label="Scroll to top" onClick={() => contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}><RotateCw size={13} /></button>
+        <div className="browser-address">
+          <LockKeyhole size={11} />
+          <span>hypercoloss.us / <strong>{page}</strong></span>
+          <span className="address-label">PORTFOLIO</span>
+        </div>
+      </div>
+
+      <div className="portfolio-scroll professional-scroll" ref={contentRef}>
+        <header className="professional-site-header">
+          <button className="professional-wordmark" onClick={() => navigate('overview')} aria-label="Go to overview">
+            <span className="professional-monogram">ZS</span>
+            <span>
+              <strong>Zachary Siegel</strong>
+              <small>Designer / Developer / Storyteller</small>
+            </span>
+          </button>
+
+          <nav className="professional-nav" aria-label="Portfolio navigation">
+            {Object.entries(pages).map(([id, label]) => (
+              <button key={id} aria-current={page === id ? 'page' : undefined} onClick={() => navigate(id)}>
+                {label}
+              </button>
+            ))}
+          </nav>
+        </header>
+
+        {page === 'overview' && (
+          <>
+            <main className="professional-hero">
+              <div className="professional-hero-copy">
+                <p className="professional-kicker"><span /> DIGITAL EXPERIENCES / 2026</p>
+                <h1>I build things people want to <em>spend time with.</em></h1>
+                <p className="professional-lede">
+                  I’m Zack — a designer and developer working across social, games, and video.
+                  I care about clear systems, strong interaction, and making digital work feel considered from the first click.
+                </p>
+                <div className="professional-hero-actions">
+                  <button className="professional-primary-action" onClick={() => navigate('work')}>
+                    View selected work <ArrowUpRight size={15} />
+                  </button>
+                  <button className="professional-text-action" onClick={() => navigate('about')}>
+                    About me
+                  </button>
+                </div>
+              </div>
+
+              <aside className="professional-hero-panel">
+                <div className="professional-panel-top">
+                  <span className="professional-panel-status"><i /> Available to explore</span>
+                  <span>01 / 03</span>
+                </div>
+                <div className="professional-panel-mark"><Layers3 size={34} strokeWidth={1.1} /></div>
+                <div>
+                  <p className="professional-kicker">CURRENT FOCUS</p>
+                  <h2>Designing systems that still feel human.</h2>
+                  <p>Interaction, storytelling, and technical craft — treated as one problem instead of three separate disciplines.</p>
+                </div>
+              </aside>
+            </main>
+
+            <section className="professional-section professional-selected">
+              <div className="professional-section-heading">
+                <div>
+                  <p className="professional-kicker">SELECTED WORK</p>
+                  <h2>A few things worth opening.</h2>
+                </div>
+                <button className="professional-text-action" onClick={() => navigate('work')}>See all work <ArrowUpRight size={14} /></button>
+              </div>
+              <div className="professional-work-grid">
+                {workItems.slice(0, 2).map(item => (
+                  <WorkCard key={item.id} item={item} onOpen={item.opensApp ? openGames : undefined} />
+                ))}
+              </div>
+            </section>
+
+            <section className="professional-section professional-capabilities">
+              <div className="professional-section-heading">
+                <div>
+                  <p className="professional-kicker">CAPABILITIES</p>
+                  <h2>Different mediums. Same standard.</h2>
+                </div>
+                <p className="professional-section-note">Strategy through execution.</p>
+              </div>
+              <div className="professional-capability-list">
+                {capabilities.map(({ icon: Icon, label, title, text, detail }, index) => (
+                  <article key={title} className="professional-capability-row">
+                    <span className="professional-capability-index">0{index + 1}</span>
+                    <span className="professional-capability-icon"><Icon size={19} strokeWidth={1.5} /></span>
+                    <div>
+                      <p className="professional-kicker">{label}</p>
+                      <h3>{title}</h3>
+                      <p>{text}</p>
+                    </div>
+                    <small>{detail}</small>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </>
+        )}
+
+        {page === 'work' && (
+          <main className="professional-page">
+            <div className="professional-page-intro">
+              <p className="professional-kicker">SELECTED WORK</p>
+              <h1>Work across community, interaction, and story.</h1>
+              <p>
+                These projects span different formats, but the process is consistent: understand the audience,
+                make the idea legible, and build the details that make it feel intentional.
+              </p>
+            </div>
+
+            <div className="professional-work-stack">
+              {workItems.map(item => (
+                <WorkCard key={item.id} item={item} onOpen={item.opensApp ? openGames : undefined} />
+              ))}
+            </div>
+          </main>
+        )}
+
+        {page === 'about' && (
+          <main className="professional-page">
+            <div className="professional-about-grid">
+              <div className="professional-page-intro">
+                <p className="professional-kicker">ABOUT</p>
+                <h1>I like the part where the idea becomes a system.</h1>
+                <p>
+                  My work moves between social content, interactive projects, and video. The medium changes;
+                  the interesting part stays the same — taking something messy and shaping it into an experience people can understand and enjoy.
+                </p>
+              </div>
+
+              <aside className="professional-about-card">
+                <Code2 size={24} strokeWidth={1.4} />
+                <p className="professional-kicker">HOW I WORK</p>
+                <ol>
+                  <li><span>01</span><strong>Find the useful idea.</strong></li>
+                  <li><span>02</span><strong>Build a clear system around it.</strong></li>
+                  <li><span>03</span><strong>Refine until the details disappear.</strong></li>
+                </ol>
+              </aside>
+            </div>
+
+            <section className="professional-section professional-about-capabilities">
+              <div className="professional-section-heading">
+                <div>
+                  <p className="professional-kicker">WHAT I DO</p>
+                  <h2>Three disciplines, one point of view.</h2>
+                </div>
+              </div>
+              <div className="professional-capability-cards">
+                {capabilities.map(({ icon: Icon, label, title, text, detail }) => (
+                  <article key={title}>
+                    <Icon size={21} strokeWidth={1.45} />
+                    <p className="professional-kicker">{label}</p>
+                    <h3>{title}</h3>
+                    <p>{text}</p>
+                    <small>{detail}</small>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </main>
+        )}
+
+        {page === 'contact' && (
+          <main className="professional-contact">
+            <div>
+              <p className="professional-kicker">CONTACT</p>
+              <h1>Have something interesting to build?</h1>
+              <p>
+                I’m always interested in thoughtful creative work, interactive ideas, and projects that need both taste and execution.
+              </p>
+            </div>
+
+            <div className="professional-contact-actions">
+              <a href="mailto:dzjwarior1@gmail.com">
+                <span><Mail size={19} /><strong>Email me</strong></span>
+                <ArrowUpRight size={17} />
+              </a>
+              <a href="https://github.com/HyperColossus" target="_blank" rel="noopener noreferrer">
+                <span><Github size={19} /><strong>GitHub</strong></span>
+                <ArrowUpRight size={17} />
+              </a>
+            </div>
+          </main>
+        )}
+
+        <footer className="professional-footer">
+          <span>© 2026 Zachary Siegel</span>
+          <span>Designed and built as an interactive desktop portfolio.</span>
+          <button onClick={() => navigate('contact')}>Get in touch <ArrowUpRight size={12} /></button>
+        </footer>
+      </div>
     </div>
-  </div>;
+  );
 }
