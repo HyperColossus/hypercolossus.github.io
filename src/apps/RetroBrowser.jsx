@@ -10,8 +10,7 @@ import {
   Radio,
   Code2,
   Layers3,
-  Mail,
-  Github,
+  Mail
 } from 'lucide-react';
 import { useWindows } from '../useWindows';
 import { desktopConfig } from '../desktopConfig';
@@ -323,7 +322,7 @@ export default function RetroBrowser() {
                 <ArrowUpRight size={17} />
               </a>
               <a href="https://github.com/HyperColossus" target="_blank" rel="noopener noreferrer">
-                <span><Github size={19} /><strong>GitHub</strong></span>
+                <span><Code2 size={19} /><strong>GitHub</strong></span>
                 <ArrowUpRight size={17} />
               </a>
             </div>
