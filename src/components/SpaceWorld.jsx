@@ -282,7 +282,7 @@ function AmbientSpaceDust() {
 function ForegroundDust() {
   const pointsRef = useRef();
   const materialRef = useRef();
-  const count = 18;
+  const count = 10;
 
   const field = useMemo(() => {
     const random = seededRandom(77123);
@@ -295,15 +295,15 @@ function ForegroundDust() {
 
     for (let index = 0; index < count; index += 1) {
       const offset = index * 3;
-      positions[offset] = THREE.MathUtils.lerp(-1.8, 1.8, random());
-      positions[offset + 1] = THREE.MathUtils.lerp(-1.25, 1.25, random());
-      positions[offset + 2] = THREE.MathUtils.lerp(-2.8, -0.55, random());
+      positions[offset] = THREE.MathUtils.lerp(-2.2, 2.2, random());
+      positions[offset + 1] = THREE.MathUtils.lerp(-1.5, 1.5, random());
+      positions[offset + 2] = THREE.MathUtils.lerp(-3.6, -1.0, random());
 
-      velocities[offset] = THREE.MathUtils.lerp(0.004, 0.015, random());
-      velocities[offset + 1] = THREE.MathUtils.lerp(0.006, 0.018, random());
-      velocities[offset + 2] = THREE.MathUtils.lerp(0.002, 0.009, random());
+      velocities[offset] = THREE.MathUtils.lerp(0.00025, 0.0008, random());
+      velocities[offset + 1] = THREE.MathUtils.lerp(0.0002, 0.0007, random());
+      velocities[offset + 2] = THREE.MathUtils.lerp(0.0001, 0.00045, random());
 
-      scales[index] = THREE.MathUtils.lerp(0.24, 0.68, random());
+      scales[index] = THREE.MathUtils.lerp(0.07, 0.16, random());
       phases[index] = random() * Math.PI * 2;
       speeds[index] = THREE.MathUtils.lerp(0.1, 0.35, random());
       amplitudes[index] = THREE.MathUtils.lerp(0.02, 0.12, random());
@@ -315,8 +315,8 @@ function ForegroundDust() {
   const uniforms = useMemo(() => ({
     uTime: { value: 0 },
     uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 1.5) },
-    uBaseOpacity: { value: 0.14 },
-    uPointScale: { value: 5.2 },
+    uBaseOpacity: { value: 0.08 },
+    uPointScale: { value: 2.4 },
     uMinPointSize: { value: 0.0 },
     uColor: { value: new THREE.Color('#e6eaff') },
   }), []);
@@ -336,9 +336,9 @@ function ForegroundDust() {
       positions[offset + 1] += field.velocities[offset + 1] * delta * 60;
       positions[offset + 2] += field.velocities[offset + 2] * delta * 60;
 
-      if (positions[offset] > 1.95) positions[offset] = -1.95;
-      if (positions[offset + 1] > 1.4) positions[offset + 1] = -1.4;
-      if (positions[offset + 2] > -0.45) positions[offset + 2] = -2.9;
+      if (positions[offset] > 2.35) positions[offset] = -2.35;
+      if (positions[offset + 1] > 1.65) positions[offset + 1] = -1.65;
+      if (positions[offset + 2] > -0.9) positions[offset + 2] = -3.7;
     }
 
     positionAttribute.needsUpdate = true;
