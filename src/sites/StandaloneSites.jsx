@@ -241,6 +241,12 @@ export function PortfolioSite() {
 
           <div className="resume-education-grid">
             <article>
+              <span className="resume-education-year">Fall 2026 — Present</span>
+              <p className="standalone-kicker">LEHMAN COLLEGE</p>
+              <h3>Master’s in Computer Science Education</h3>
+              <p>Currently pursuing graduate study in computer science education.</p>
+            </article>
+            <article>
               <span className="resume-education-year">May 2025</span>
               <p className="standalone-kicker">SUNY POLYTECHNIC INSTITUTE</p>
               <h3>B.S. Interactive Media & Game Design</h3>
