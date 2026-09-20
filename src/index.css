@@ -203,6 +203,7 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
   right: 6%;
   top: -12%;
   background: radial-gradient(circle, rgba(88,101,242,.16), rgba(52,66,217,.035) 48%, transparent 72%);
+  animation: wallpaper-drift-far 13s ease-in-out infinite alternate;
 }
 
 .wallpaper-depth-near {
@@ -212,6 +213,7 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
   bottom: -26%;
   background: radial-gradient(circle, rgba(0,176,244,.09), transparent 68%);
   filter: blur(42px);
+  animation: wallpaper-drift-near 10s ease-in-out infinite alternate;
 }
 
 .wallpaper-grid {
@@ -238,6 +240,7 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
     0 0 120px rgba(52,66,217,.13),
     inset -18px -26px 44px rgba(2,4,16,.52),
     inset 10px 10px 25px rgba(255,255,255,.08);
+  animation: wallpaper-orb-breathe 9s ease-in-out infinite alternate;
 }
 
 .wallpaper-orbit {
@@ -454,6 +457,7 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
     0 -1px 0 rgba(67,70,95,.09) inset !important;
   transform-origin: center;
   transition: box-shadow .22s ease, opacity .22s ease, transform .22s ease !important;
+  animation: window-materialize .30s cubic-bezier(.18,.8,.2,1) both;
 }
 
 .studio-window.is-active {
@@ -489,6 +493,27 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
   opacity: .25;
   background: linear-gradient(180deg, rgba(255,255,255,.20), transparent);
   mask-image: linear-gradient(to bottom, #000, transparent);
+}
+
+@keyframes wallpaper-drift-far {
+  from { transform: translate3d(-1.5%, -1%, 0) scale(.98); }
+  to { transform: translate3d(2%, 1.5%, 0) scale(1.035); }
+}
+
+@keyframes wallpaper-drift-near {
+  from { transform: translate3d(-2%, 1%, 0) scale(1); }
+  to { transform: translate3d(3%, -2%, 0) scale(1.05); }
+}
+
+@keyframes wallpaper-orb-breathe {
+  from { transform: translate3d(0, 0, 0) scale(.995); filter: brightness(.94); }
+  to { transform: translate3d(-1.2%, 1.1%, 0) scale(1.018); filter: brightness(1.06); }
+}
+
+@keyframes window-materialize {
+  0% { opacity: 0; transform: translateY(10px) scale(.975); filter: blur(2px); }
+  68% { opacity: 1; transform: translateY(-1px) scale(1.003); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
 /* Browser/editorial content: layered paper, glass and responsive lift. */
