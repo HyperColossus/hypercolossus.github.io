@@ -55,9 +55,7 @@ function ComputerModel({ onClick, isZoomed, windowContext }) {
 }
 
 function PhysicalPowerButton({ onPower, disabled }) {
-  const groupRef = useRef();
   const capRef = useRef();
-  const ringRef = useRef();
   const [hovered, setHovered] = useState(false);
   const pressedRef = useRef(false);
   const elapsedRef = useRef(0);
@@ -66,14 +64,13 @@ function PhysicalPowerButton({ onPower, disabled }) {
   useCursor(!disabled && hovered);
 
   useFrame((_, delta) => {
-    if (!groupRef.current || !capRef.current || !ringRef.current) return;
+    if (!capRef.current) return;
 
     if (!pressedRef.current) {
-      capRef.current.position.z = THREE.MathUtils.damp(capRef.current.position.z, 0, 18, delta);
-      ringRef.current.material.emissiveIntensity = THREE.MathUtils.damp(
-        ringRef.current.material.emissiveIntensity,
-        hovered && !disabled ? 0.5 : 0.12,
-        10,
+      capRef.current.position.z = THREE.MathUtils.damp(
+        capRef.current.position.z,
+        0,
+        18,
         delta,
       );
       return;
@@ -84,8 +81,7 @@ function PhysicalPowerButton({ onPower, disabled }) {
     const progress = Math.min(elapsedRef.current / pressDuration, 1);
     const pressCurve = Math.sin(progress * Math.PI);
 
-    capRef.current.position.z = -0.014 * pressCurve;
-    ringRef.current.material.emissiveIntensity = 0.65 + pressCurve * 1.6;
+    capRef.current.position.z = -0.012 * pressCurve;
 
     if (progress >= 1 && !firedRef.current) {
       firedRef.current = true;
@@ -103,9 +99,7 @@ function PhysicalPowerButton({ onPower, disabled }) {
 
   return (
     <group
-      ref={groupRef}
-      position={[0.165, -0.135, 0.344]}
-      rotation={[0, 0, 0]}
+      position={[0.23, -0.135, 0.344]}
       onPointerOver={(event) => {
         event.stopPropagation();
         if (!disabled) setHovered(true);
@@ -113,45 +107,29 @@ function PhysicalPowerButton({ onPower, disabled }) {
       onPointerOut={() => setHovered(false)}
       onClick={handlePower}
     >
-      <mesh position={[0, 0, -0.006]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.026, 0.026, 0.012, 32]} />
-        <meshStandardMaterial color="#15171d" roughness={0.7} metalness={0.25} />
-      </mesh>
-
-      <mesh ref={capRef} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.018, 0.018, 0.01, 32]} />
+      {/* Dark recessed slot behind the switch. */}
+      <mesh position={[0, 0, -0.009]}>
+        <boxGeometry args={[0.112, 0.038, 0.014]} />
         <meshStandardMaterial
-          color="#2b2f39"
-          roughness={0.5}
-          metalness={0.35}
-          emissive="#11131a"
-          emissiveIntensity={0.1}
+          color="#202228"
+          roughness={0.86}
+          metalness={0.1}
         />
       </mesh>
 
-      <mesh ref={ringRef} position={[0, 0, 0.008]}>
-        <torusGeometry args={[0.0215, 0.0023, 10, 32]} />
+      {/* Large grey horizontal hardware switch, matching the reference. */}
+      <mesh ref={capRef} rotation={[0, 0, Math.PI / 2]}>
+        <capsuleGeometry args={[0.014, 0.058, 8, 18]} />
         <meshStandardMaterial
-          color="#69708b"
-          emissive="#8c9cff"
-          emissiveIntensity={0.12}
-          roughness={0.45}
-          metalness={0.45}
+          color={hovered && !disabled ? "#9a9ca3" : "#7f8188"}
+          roughness={0.76}
+          metalness={0.14}
         />
       </mesh>
 
-      <mesh position={[0, 0, 0.014]}>
-        <ringGeometry args={[0.004, 0.0055, 24, 1, 0.48, Math.PI * 1.04]} />
-        <meshBasicMaterial color="#cfd7ff" transparent opacity={0.82} toneMapped={false} />
-      </mesh>
-      <mesh position={[0, 0.004, 0.014]}>
-        <planeGeometry args={[0.0028, 0.012]} />
-        <meshBasicMaterial color="#cfd7ff" transparent opacity={0.82} toneMapped={false} />
-      </mesh>
-
-      {/* Larger invisible hit target so the physical control is easy to click. */}
-      <mesh position={[0, 0, 0.01]}>
-        <circleGeometry args={[0.046, 24]} />
+      {/* Larger invisible hit area keeps the real-looking switch easy to press. */}
+      <mesh position={[0, 0, 0.012]}>
+        <boxGeometry args={[0.14, 0.065, 0.045]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
     </group>
@@ -273,16 +251,16 @@ function ScreenPortalGlow({ isZoomed }) {
     const idlePulse = 0.5 + Math.sin(performance.now() * 0.0014) * 0.5;
 
     if (innerRef.current) {
-      const idleOpacity = isZoomed ? 0 : 0.08 + idlePulse * 0.025;
+      const idleOpacity = isZoomed ? 0 : 0.01 + idlePulse * 0.004;
       innerRef.current.material.opacity = idleOpacity + bootPulse * 0.38;
-      const scale = isZoomed ? 1 + progress * 0.34 : 1.02 + idlePulse * 0.015;
+      const scale = isZoomed ? 1 + progress * 0.34 : 1.002 + idlePulse * 0.003;
       innerRef.current.scale.setScalar(scale);
     }
 
     if (outerRef.current) {
-      const idleOpacity = isZoomed ? 0 : 0.035 + idlePulse * 0.012;
+      const idleOpacity = isZoomed ? 0 : 0.004 + idlePulse * 0.002;
       outerRef.current.material.opacity = idleOpacity + bootPulse * 0.13;
-      const scale = isZoomed ? 1.08 + progress * 0.72 : 1.08 + idlePulse * 0.02;
+      const scale = isZoomed ? 1.08 + progress * 0.72 : 1.01 + idlePulse * 0.004;
       outerRef.current.scale.setScalar(scale);
     }
   });
