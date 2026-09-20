@@ -194,7 +194,7 @@ button { font: inherit; }
 
 .standalone-work-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
 }
 
@@ -1859,6 +1859,12 @@ button { font: inherit; }
 
   .resume-skill-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 1050px) {
+  .resume-education-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
