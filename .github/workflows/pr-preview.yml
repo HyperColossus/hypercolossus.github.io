@@ -1,4 +1,3 @@
-# Preview workflow is bootstrapped on main; this branch copy triggers the current PR preview.
 name: PR preview
 
 on:
@@ -33,4 +32,4 @@ jobs:
           action: auto
           comment: true
           qr-code: false
-          wait-for-pages-deployment: true
+          wait-for-pages-deployment: false
