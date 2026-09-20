@@ -14,7 +14,7 @@ const SCREEN_HEIGHT = 0.31875;
 const TRANSITION_DURATION = 1.25;
 const BG_COLOR = '#000000';
 
-function ComputerModel({ onClick, isZoomed, windowContext, powerButtonTransform }) {
+function ComputerModel({ onClick, isZoomed, windowContext }) {
   const groupRef = useRef();
   const computerModelUrl = `${import.meta.env.BASE_URL}retro_computer_fixed.glb`;
   const { scene } = useGLTF(computerModelUrl);
@@ -43,7 +43,7 @@ function ComputerModel({ onClick, isZoomed, windowContext, powerButtonTransform 
   return (
     <group ref={groupRef}>
       <Center><primitive object={model} scale={2} /></Center>
-      <PhysicalPowerButton onPower={onClick} disabled={isZoomed} transform={powerButtonTransform} />
+      <PhysicalPowerButton onPower={onClick} disabled={isZoomed} />
       <ScreenPortalGlow isZoomed={isZoomed} />
       <SmartScreen isPoweredOn={isZoomed}>
         <div style={{ width: 800, height: 600 }} className="os-desktop overflow-hidden rounded-[32px] bg-zinc-900 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
@@ -54,7 +54,7 @@ function ComputerModel({ onClick, isZoomed, windowContext, powerButtonTransform 
   );
 }
 
-function PhysicalPowerButton({ onPower, disabled, transform }) {
+function PhysicalPowerButton({ onPower, disabled }) {
   const capRef = useRef();
   const [hovered, setHovered] = useState(false);
   const pressedRef = useRef(false);
@@ -99,8 +99,8 @@ function PhysicalPowerButton({ onPower, disabled, transform }) {
 
   return (
     <group
-      position={[transform.x, transform.y, transform.z]}
-      scale={transform.scale}
+      position={[0.208, -0.146, 0.353]}
+      scale={0.65}
       onPointerOver={(event) => {
         event.stopPropagation();
         if (!disabled) setHovered(true);
@@ -150,12 +150,6 @@ export default function IntroScene() {
 function IntroExperience() {
   const windowContext = useWindows();
   const [isZoomed, setIsZoomed] = useState(false);
-  const [powerButtonTransform, setPowerButtonTransform] = useState({
-    x: 0.285,
-    y: -0.135,
-    z: 0.344,
-    scale: 0.3,
-  });
   const [directDesktop] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   if (directDesktop) return <div className="h-dvh w-full"><Desktop /></div>;
   const fallback = <div className="h-dvh w-full"><Desktop /></div>;
@@ -176,7 +170,6 @@ function IntroExperience() {
               onClick={() => setIsZoomed(true)}
               isZoomed={isZoomed}
               windowContext={windowContext}
-              powerButtonTransform={powerButtonTransform}
             />
           </React.Suspense>
           <OrbitControls
@@ -195,97 +188,9 @@ function IntroExperience() {
           />
           <CameraZoomRig isZoomed={isZoomed} />
         </Canvas>
-        {!isZoomed && (
-          <PowerButtonTuner
-            value={powerButtonTransform}
-            onChange={setPowerButtonTransform}
-          />
-        )}
         {!isZoomed && <div className="intro-footer"><div><p className="eyebrow">A familiar place. A few new ideas.</p><h1>Make yourself <em>at home.</em></h1><p>An interactive portfolio by Zack Siegel.</p></div><div className="intro-actions"><span>DRAG TO ORBIT · PRESS THE COMPUTER POWER BUTTON</span></div></div>}
       </SceneBoundary>
     </div>
-  );
-}
-
-function PowerButtonTuner({ value, onChange }) {
-  const update = (key, nextValue) => {
-    onChange(current => ({
-      ...current,
-      [key]: Number(nextValue),
-    }));
-  };
-
-  const reset = () => {
-    onChange({
-      x: 0.285,
-      y: -0.135,
-      z: 0.344,
-      scale: 0.3,
-    });
-  };
-
-  return (
-    <aside className="power-button-tuner" aria-label="Power button tuning controls">
-      <div className="power-button-tuner__header">
-        <div>
-          <p>POWER BUTTON TUNING</p>
-          <small>Move the switch into place</small>
-        </div>
-        <button type="button" onClick={reset}>Reset</button>
-      </div>
-
-      <label>
-        <span>X · left / right <output>{value.x.toFixed(3)}</output></span>
-        <input
-          type="range"
-          min="0.05"
-          max="0.42"
-          step="0.002"
-          value={value.x}
-          onChange={(event) => update('x', event.target.value)}
-        />
-      </label>
-
-      <label>
-        <span>Y · up / down <output>{value.y.toFixed(3)}</output></span>
-        <input
-          type="range"
-          min="-0.28"
-          max="0.08"
-          step="0.002"
-          value={value.y}
-          onChange={(event) => update('y', event.target.value)}
-        />
-      </label>
-
-      <label>
-        <span>Depth <output>{value.z.toFixed(3)}</output></span>
-        <input
-          type="range"
-          min="0.28"
-          max="0.42"
-          step="0.001"
-          value={value.z}
-          onChange={(event) => update('z', event.target.value)}
-        />
-      </label>
-
-      <label>
-        <span>Size <output>{Math.round(value.scale * 100)}%</output></span>
-        <input
-          type="range"
-          min="0.15"
-          max="0.65"
-          step="0.01"
-          value={value.scale}
-          onChange={(event) => update('scale', event.target.value)}
-        />
-      </label>
-
-      <p className="power-button-tuner__values">
-        x {value.x.toFixed(3)} · y {value.y.toFixed(3)} · z {value.z.toFixed(3)} · size {value.scale.toFixed(2)}
-      </p>
-    </aside>
   );
 }
 
