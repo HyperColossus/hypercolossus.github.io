@@ -234,7 +234,7 @@ export function PortfolioSite() {
           <div className="resume-section-heading">
             <div>
               <p className="standalone-kicker">EDUCATION</p>
-              <h2>Interactive media, game design, and computer science.</h2>
+              <h2>Computer science education, interactive media, and game design.</h2>
             </div>
             <GraduationCap size={30} strokeWidth={1.25} />
           </div>
