@@ -1,22 +1,28 @@
 import React from 'react';
-import { ChartNoAxesCombined, Folder, ArrowUpRight } from 'lucide-react';
-import { desktopConfig } from '../desktopConfig';
-import { useWindows } from '../useWindows';
+import { Folder, FlaskConical, Sparkles } from 'lucide-react';
 
 export default function SideProjects() {
-  const { openWindow } = useWindows();
-  const projects = desktopConfig.filter(app => app.folder === 'side-projects');
+  return (
+    <div className="side-projects-folder">
+      <div className="folder-path">
+        <Folder size={15} strokeWidth={1.5} />
+        <span>Desktop / <strong>Side projects</strong></span>
+      </div>
 
-  return <div className="side-projects-folder">
-    <div className="folder-path"><Folder size={15} strokeWidth={1.5} /><span>Desktop / <strong>Side projects</strong></span></div>
-    <div className="folder-contents">
-      <p className="eyebrow">Small tools & experiments</p>
-      {projects.map(app => <button key={app.id} className="folder-item" onClick={() => openWindow(app)}>
-        <span className="folder-item-icon"><ChartNoAxesCombined size={26} strokeWidth={1.4} aria-hidden="true" /></span>
-        <span><strong>{app.label}</strong><small>{app.description}</small></span>
-        <ArrowUpRight size={16} aria-hidden="true" />
-      </button>)}
+      <div className="folder-contents folder-empty-state">
+        <div className="folder-empty-icon" aria-hidden="true">
+          <FlaskConical size={30} strokeWidth={1.4} />
+        </div>
+        <p className="eyebrow">THE LAB</p>
+        <h2>Small experiments live here.</h2>
+        <p>
+          I’m rebuilding this section around projects that are worth opening.
+          New tools, prototypes, and one-off experiments will land here as they’re ready.
+        </p>
+        <span className="folder-empty-status"><Sparkles size={13} /> In progress</span>
+      </div>
+
+      <footer className="folder-status">Workspace ready</footer>
     </div>
-    <footer className="folder-status">{projects.length} {projects.length === 1 ? 'item' : 'items'}</footer>
-  </div>;
+  );
 }
