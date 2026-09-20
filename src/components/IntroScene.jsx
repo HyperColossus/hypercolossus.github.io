@@ -14,7 +14,8 @@ const BG_COLOR = '#000000';
 function ComputerModel({ onClick, isZoomed, windowContext }) {
   const groupRef = useRef();
   const [hovered, setHovered] = useState(false);
-  const { scene } = useGLTF('/retro_computer_fixed.glb');
+  const computerModelUrl = `${import.meta.env.BASE_URL}retro_computer_fixed.glb`;
+  const { scene } = useGLTF(computerModelUrl);
   const model = useMemo(() => {
     const instance = scene.clone(true);
     instance.traverse(child => {
