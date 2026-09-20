@@ -37,7 +37,7 @@ export default function Desktop() {
   const runningApps = desktopConfig.filter(app => windows.some(win => win.id === app.id));
   return <div className="studio-desktop">
     <div className="desktop-wallpaper" aria-hidden="true"><div className="wallpaper-orbit" /><div className="wallpaper-sun" /><div className="wallpaper-horizon" /></div>
-    <header className="desktop-menubar"><span className="desktop-brand"><span className="brand-mark">zs.</span> Personal desktop</span><span className="desktop-edition">A little bit of everything.</span><time dateTime={time.toISOString()}>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time></header>
+    <header className="desktop-menubar"><span className="desktop-brand"><span className="brand-mark">ZS</span> Personal desktop</span><span className="desktop-edition">A little bit of everything.</span><time dateTime={time.toISOString()}>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time></header>
     <div ref={desktopRef} className="desktop-workspace">
       <div className="desktop-shortcuts">{desktopConfig.filter(app => !app.folder).map(app => {
         const Icon = ICON_MAP[app.icon];
