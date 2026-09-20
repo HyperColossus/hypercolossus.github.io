@@ -1,0 +1,1 @@
+import{f as e,h as t,p as n,v as r}from"./sparkles-M_h0s7xS.js";import{n as i}from"./standalone-C2miYiVp.js";var a=r(t(),1),o=r(n(),1),s=e();(0,o.createRoot)(document.getElementById(`root`)).render((0,s.jsx)(a.StrictMode,{children:(0,s.jsx)(i,{})}));
