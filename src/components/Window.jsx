@@ -108,7 +108,6 @@ export default function Window({ windowData, children, desktopSize, desktopRef }
           <span>{windowData.label}</span>
         </div>
 
-        <span className="window-drag-hint" aria-hidden="true">DRAG</span>
       </div>
 
       <div className="window-content">
