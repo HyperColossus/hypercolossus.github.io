@@ -1,12 +1,12 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useCursor, useGLTF, Center, Html } from '@react-three/drei';
+import { useCursor, useGLTF, Center, Html, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { Power } from 'lucide-react';
 import Desktop from './Desktop';
 import { WindowProvider } from '../WindowContext.jsx';
 import { WindowContext, useWindows } from '../useWindows';
-import { CameraFloatRig, SpaceWorld } from './SpaceWorld.jsx';
+import { SpaceWorld } from './SpaceWorld.jsx';
 
 const SCREEN = new THREE.Vector3(-0.079, 0.085, 0.312);
 const SCREEN_ROTATION = new THREE.Euler(-0.08, 0, 0);
@@ -74,23 +74,47 @@ function IntroExperience() {
       <SceneBoundary fallback={fallback}>
         <Canvas shadows={{ type: THREE.VSMShadowMap }} dpr={[1, 1.5]} camera={{ position: [1.55, 1.1, 2.15], fov: 45 }} fallback={null}>
           <color attach="background" args={[BG_COLOR]} />
-          <ambientLight intensity={0.32} />
-          <hemisphereLight args={['#dbe4ff', '#080811', 1.05]} />
-          <spotLight position={[-1.8, 3.5, 2]} color="#e7edff" intensity={48}
-            angle={0.72} penumbra={1} decay={2} distance={14} castShadow
-            shadow-mapSize={[1024, 1024]} shadow-radius={4} shadow-blurSamples={8}
-            shadow-bias={-0.0003} shadow-normalBias={0.015} />
-          <pointLight position={[1.75, 1.45, 2.65]} color="#ffffff" intensity={16} distance={7} decay={2} />
-          <directionalLight position={[2.5, 1.8, 3]} color="#cbd7ff" intensity={2.4} />
-          <directionalLight position={[-3, 1, 3]} color="#5f6f99" intensity={0.8} />
+          <ambientLight intensity={0.22} />
+          <hemisphereLight args={['#dbe4ff', '#050509', 0.8]} />
+          <spotLight
+            position={[0.25, 5.8, 4.2]}
+            color="#f4f7ff"
+            intensity={115}
+            angle={0.9}
+            penumbra={0.82}
+            decay={1.45}
+            distance={22}
+            castShadow
+            shadow-mapSize={[2048, 2048]}
+            shadow-radius={6}
+            shadow-blurSamples={10}
+            shadow-bias={-0.00025}
+            shadow-normalBias={0.02}
+          />
+          <pointLight position={[0.6, 1.2, 2.8]} color="#ffffff" intensity={20} distance={8} decay={2} />
+          <directionalLight position={[3, 2, 3]} color="#b8c7ff" intensity={1.6} />
+          <directionalLight position={[-3, 1, 2]} color="#45557e" intensity={0.7} />
           <SpaceWorld />
           <React.Suspense fallback={<Html center><p className="whitespace-nowrap text-white" role="status">Loading computer…</p></Html>}>
             <ComputerModel onClick={() => setIsZoomed(true)} isZoomed={isZoomed} windowContext={windowContext} />
           </React.Suspense>
-          <CameraFloatRig isZoomed={isZoomed} />
+          <OrbitControls
+            enabled={!isZoomed}
+            target={[0, 0.02, 0]}
+            enablePan={false}
+            enableZoom
+            enableDamping
+            dampingFactor={0.055}
+            rotateSpeed={0.45}
+            zoomSpeed={0.6}
+            minDistance={1.8}
+            maxDistance={5.5}
+            minPolarAngle={Math.PI * 0.2}
+            maxPolarAngle={Math.PI * 0.72}
+          />
           <CameraZoomRig isZoomed={isZoomed} />
         </Canvas>
-        {!isZoomed && <div className="intro-footer"><div><p className="eyebrow">A familiar place. A few new ideas.</p><h1>Make yourself <em>at home.</em></h1><p>An interactive portfolio by Zack Siegel.</p></div><div className="intro-actions"><span>MOVE TO LOOK AROUND</span><button className="studio-button" onClick={() => setIsZoomed(true)}><Power size={14} />Start computer</button></div></div>}
+        {!isZoomed && <div className="intro-footer"><div><p className="eyebrow">A familiar place. A few new ideas.</p><h1>Make yourself <em>at home.</em></h1><p>An interactive portfolio by Zack Siegel.</p></div><div className="intro-actions"><span>DRAG TO ORBIT</span><button className="studio-button" onClick={() => setIsZoomed(true)}><Power size={14} />Start computer</button></div></div>}
       </SceneBoundary>
     </div>
   );
