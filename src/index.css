@@ -819,34 +819,6 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
   }
 }
 
-/* Tracker: lift the useful data into cards without changing its behavior. */
-.tracker-app {
-  background:
-    radial-gradient(circle at 82% 0%, rgba(88,101,242,.055), transparent 25%),
-    linear-gradient(180deg, #f8f6ef, #f0ece3) !important;
-}
-
-.tracker-app > div:first-child {
-  background: rgba(250,249,244,.84) !important;
-  box-shadow: 0 7px 20px rgba(54,52,46,.065), inset 0 -1px rgba(72,70,64,.06);
-}
-
-.tracker-summary {
-  padding: 20px 18px;
-  border: 1px solid rgba(99,89,72,.10);
-  border-radius: 13px;
-  background: linear-gradient(145deg, rgba(255,255,255,.78), rgba(235,232,220,.75));
-  box-shadow: 0 12px 23px rgba(74,66,48,.075), inset 0 1px #fff;
-}
-
-.tracker-app .rounded-2xl,
-.tracker-app .rounded-3xl {
-  box-shadow:
-    0 12px 24px rgba(59,55,47,.075),
-    0 3px 7px rgba(59,55,47,.045),
-    inset 0 1px rgba(255,255,255,.72) !important;
-}
-
 /* CRT monitor boot: dark glass at rest, phosphor line on power-up, then desktop reveal. */
 .crt-screen-shell {
   position: relative;
@@ -1115,15 +1087,6 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
 .intro-actions .studio-button { background: #edb585; color: #27291f; }
 .intro-actions .studio-button:hover { background: #f5cfa8; }
 .intro-actions > span { font: 9px Consolas, monospace; color: #bebcaa; }
-.tracker-app { background: var(--paper) !important; }
-.tracker-app > div:first-child { background: #f6f3eb !important; }
-.tracker-status { font: 9px Consolas, monospace; padding: 5px 8px; border-radius: 4px; background: #e9e6dc; color: #777366; }
-.tracker-status[data-state='connected'] { background: #e1ebd5; color: #4c6238; }
-.tracker-status[data-state='offline'], .tracker-status[data-state='partial'] { background: #f5e6d1; color: #8d5726; }
-.tracker-summary { display: flex; justify-content: space-between; align-items: center; padding: 19px 0; border-bottom: 1px solid var(--line); margin-bottom: 25px; }
-.tracker-summary strong { font-size: 33px; letter-spacing: -.06em; font-weight: 500; }
-.tracker-summary p { font-size: 10px; color: var(--muted); }
-.tracker-notice { background: #eee9dc; padding: 13px 16px; font-size: 11px; line-height: 1.7; color: #76684f; border-left: 2px solid #c8a779; margin-bottom: 22px; }
 /* Professional UI redesign: a custom midnight workstation rather than a themed OS clone. */
 .studio-button {
   gap: 12px;
@@ -1697,15 +1660,13 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
 }
 
 /* Unify utility apps with the same cool-neutral product language. */
-.side-projects-folder,
-.tracker-app {
+.side-projects-folder {
   background:
     radial-gradient(circle at 86% 3%, rgba(88,101,242,.045), transparent 24%),
     linear-gradient(180deg, #f9faff, #f1f3f8) !important;
 }
 
-.folder-path,
-.tracker-app > div:first-child {
+.folder-path {
   background: rgba(248,249,253,.94) !important;
   border-color: #dfe3ed;
   box-shadow: 0 5px 16px rgba(37,42,67,.045), inset 0 1px #fff;
@@ -1724,17 +1685,6 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
   box-shadow: 0 6px 13px rgba(52,66,217,.10), inset 0 1px #fff;
 }
 
-.tracker-summary {
-  border-color: #dfe3ed;
-  background: #fff;
-  box-shadow: 0 8px 20px rgba(37,42,67,.05), inset 0 1px #fff;
-}
-
-.tracker-notice {
-  background: #eef0fb;
-  color: #565e78;
-  border-left-color: #5865f2;
-}
 
 /* Game library remains cinematic, but now belongs to the same product family. */
 .game-library {
@@ -1783,6 +1733,128 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
 .game-art {
   border-color: rgba(185,192,224,.15);
   box-shadow: 0 17px 34px rgba(0,0,0,.31), 0 4px 11px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.10);
+}
+
+/* Window isolation pass: desktop layers never bleed through app surfaces. */
+.desktop-wallpaper {
+  z-index: 0;
+}
+
+.desktop-menubar {
+  z-index: 200000;
+}
+
+.desktop-workspace {
+  z-index: 10;
+  isolation: isolate;
+}
+
+.desktop-shortcuts,
+.desktop-welcome,
+.desktop-caption {
+  z-index: 10;
+}
+
+.studio-window {
+  isolation: isolate;
+  background: #ffffff !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+}
+
+.studio-window.is-inactive {
+  opacity: 1 !important;
+  filter: saturate(.92) brightness(.975);
+}
+
+.studio-window.is-active {
+  opacity: 1 !important;
+  filter: none;
+}
+
+.window-titlebar {
+  background: linear-gradient(180deg, #20263a, #171b2c) !important;
+}
+
+.window-content {
+  isolation: isolate;
+  background: #ffffff !important;
+}
+
+.portfolio-browser,
+.portfolio-scroll {
+  background-color: #ffffff;
+}
+
+.portfolio-browser {
+  background-image:
+    radial-gradient(circle at 86% 7%, rgba(88,101,242,.045), transparent 25%),
+    linear-gradient(180deg, #ffffff 0%, #f7f8fc 100%);
+}
+
+.side-projects-folder {
+  background-color: #f7f8fc !important;
+}
+
+.folder-empty-state {
+  display: flex;
+  min-height: 100%;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  padding: 42px 44px;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(88,101,242,.08), transparent 27%),
+    #ffffff;
+}
+
+.folder-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 24px;
+  border: 1px solid #dfe3f0;
+  border-radius: 15px;
+  color: #5865f2;
+  background: linear-gradient(145deg, #f7f8ff, #e8ebff);
+  box-shadow: 0 10px 24px rgba(52,66,217,.10), inset 0 1px #fff;
+}
+
+.folder-empty-state .eyebrow {
+  margin: 0 0 8px;
+  color: #5865f2;
+}
+
+.folder-empty-state h2 {
+  margin: 0;
+  max-width: 310px;
+  color: #181b27;
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -.035em;
+}
+
+.folder-empty-state > p:not(.eyebrow) {
+  max-width: 350px;
+  margin: 14px 0 20px;
+  color: #73798a;
+  font-size: 12px;
+  line-height: 1.75;
+}
+
+.folder-empty-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid #e0e3ee;
+  border-radius: 999px;
+  color: #626981;
+  background: #f8f9fc;
+  font: 9px Consolas, monospace;
+  letter-spacing: .05em;
+  text-transform: uppercase;
 }
 
 @container (min-width: 1100px) { .desktop-welcome { left: 24%; top: 19%; } }
