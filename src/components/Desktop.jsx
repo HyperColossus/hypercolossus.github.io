@@ -36,7 +36,17 @@ export default function Desktop() {
   }, []);
   const runningApps = desktopConfig.filter(app => windows.some(win => win.id === app.id));
   return <div className="studio-desktop">
-    <div className="desktop-wallpaper" aria-hidden="true"><div className="wallpaper-orbit" /><div className="wallpaper-sun" /><div className="wallpaper-horizon" /></div>
+    <div className="desktop-wallpaper" aria-hidden="true">
+      <div className="wallpaper-depth wallpaper-depth-far" />
+      <div className="wallpaper-grid" />
+      <div className="wallpaper-orbit wallpaper-orbit-back" />
+      <div className="wallpaper-sun" />
+      <div className="wallpaper-orbit" />
+      <div className="wallpaper-horizon wallpaper-horizon-back" />
+      <div className="wallpaper-horizon" />
+      <div className="wallpaper-depth wallpaper-depth-near" />
+      <div className="wallpaper-vignette" />
+    </div>
     <header className="desktop-menubar"><span className="desktop-brand"><span className="brand-mark">ZS</span> Personal desktop</span><span className="desktop-edition">A little bit of everything.</span><time dateTime={time.toISOString()}>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time></header>
     <div ref={desktopRef} className="desktop-workspace">
       <div className="desktop-shortcuts">{desktopConfig.filter(app => !app.folder).map(app => {
