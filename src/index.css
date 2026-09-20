@@ -173,6 +173,265 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
 .game-tags { display: flex; gap: 8px; margin: 20px 0; }
 .game-tags span { font-size: 10px; padding: 5px 10px; border: 1px solid #cad2b333; border-radius: 4px; }
 .game-detail .release-note { border-top: 1px solid #d6dec51f; padding-top: 20px; font-size: 11px !important; }
+/* CRT monitor boot: dark glass at rest, phosphor line on power-up, then desktop reveal. */
+.crt-screen-shell {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  overflow: hidden;
+  border-radius: 32px;
+  background: #000;
+  isolation: isolate;
+  box-shadow:
+    inset 0 0 34px #000,
+    0 0 18px rgba(88, 101, 242, .10),
+    0 0 52px rgba(88, 101, 242, .04);
+}
+
+.crt-screen-content {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  filter: brightness(.35) contrast(1.35) saturate(.72);
+  transform: scale(1.012, .985);
+  transform-origin: center;
+}
+
+.crt-blackout,
+.crt-power-line,
+.crt-phosphor-flash,
+.crt-scanlines,
+.crt-glass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.crt-blackout {
+  z-index: 6;
+  background: #000;
+  opacity: 1;
+}
+
+.crt-power-line {
+  z-index: 8;
+  top: 50%;
+  bottom: auto;
+  height: 4px;
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: center;
+  opacity: 0;
+  background: #f8faff;
+  box-shadow:
+    0 0 7px #fff,
+    0 0 18px rgba(199, 210, 255, .95),
+    0 0 46px rgba(88, 101, 242, .75);
+}
+
+.crt-phosphor-flash {
+  z-index: 7;
+  background:
+    radial-gradient(ellipse at center,
+      rgba(255,255,255,.98) 0%,
+      rgba(223,230,255,.88) 28%,
+      rgba(118,137,255,.44) 58%,
+      rgba(88,101,242,.08) 82%,
+      transparent 100%);
+  transform: scaleX(.04) scaleY(.004);
+  transform-origin: center;
+  opacity: 0;
+  filter: blur(1px);
+}
+
+.crt-scanlines {
+  z-index: 9;
+  opacity: .07;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,.045) 0,
+    rgba(255,255,255,.045) 1px,
+    rgba(0,0,0,.10) 2px,
+    rgba(0,0,0,.10) 4px
+  );
+  mix-blend-mode: soft-light;
+}
+
+.crt-glass {
+  z-index: 10;
+  border-radius: inherit;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,.055), transparent 19% 75%, rgba(143,157,222,.025)),
+    radial-gradient(ellipse at center, transparent 58%, rgba(0,0,0,.22) 100%);
+  box-shadow: inset 0 0 38px rgba(0,0,0,.52);
+}
+
+.crt-screen-shell.is-idle {
+  animation: crt-idle-glow 4.8s ease-in-out infinite;
+}
+
+.crt-screen-shell.is-idle .crt-screen-content {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.crt-screen-shell.is-powering-on {
+  animation: crt-shell-boot 1.25s linear both;
+}
+
+.crt-screen-shell.is-powering-on .crt-screen-content {
+  animation: crt-content-wake 1.25s linear both;
+}
+
+.crt-screen-shell.is-powering-on .crt-blackout {
+  animation: crt-blackout-release 1.25s linear both;
+}
+
+.crt-screen-shell.is-powering-on .crt-power-line {
+  animation: crt-line-boot 1.25s linear both;
+}
+
+.crt-screen-shell.is-powering-on .crt-phosphor-flash {
+  animation: crt-phosphor-boot 1.25s cubic-bezier(.22,.7,.2,1) both;
+}
+
+.crt-screen-shell.is-powering-on .crt-scanlines {
+  animation: crt-scanline-settle 1.25s linear both;
+}
+
+@keyframes crt-idle-glow {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 34px #000,
+      0 0 15px rgba(88, 101, 242, .08),
+      0 0 42px rgba(88, 101, 242, .035);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 32px #000,
+      0 0 23px rgba(112, 128, 255, .15),
+      0 0 62px rgba(88, 101, 242, .06);
+  }
+}
+
+@keyframes crt-shell-boot {
+  0%, 12% { filter: brightness(.8); }
+  18% { filter: brightness(1.3); }
+  24% { filter: brightness(.95); }
+  46% { filter: brightness(1.22); }
+  52% { filter: brightness(.84); }
+  58% { filter: brightness(1.12); }
+  72%, 100% { filter: brightness(1); }
+}
+
+@keyframes crt-line-boot {
+  0%, 8% {
+    opacity: 0;
+    transform: translateY(-50%) scaleX(.03);
+  }
+  12% {
+    opacity: 1;
+    transform: translateY(-50%) scaleX(.08);
+  }
+  24% {
+    opacity: 1;
+    transform: translateY(-50%) scaleX(.92);
+  }
+  35% {
+    opacity: .95;
+    transform: translateY(-50%) scaleX(1);
+  }
+  46% {
+    opacity: .26;
+    transform: translateY(-50%) scaleX(1);
+  }
+  53%, 100% {
+    opacity: 0;
+    transform: translateY(-50%) scaleX(1);
+  }
+}
+
+@keyframes crt-phosphor-boot {
+  0%, 11% {
+    opacity: 0;
+    transform: scaleX(.04) scaleY(.004);
+  }
+  18% {
+    opacity: .95;
+    transform: scaleX(.2) scaleY(.004);
+  }
+  31% {
+    opacity: 1;
+    transform: scaleX(1) scaleY(.008);
+  }
+  44% {
+    opacity: .8;
+    transform: scaleX(1) scaleY(.08);
+  }
+  54% {
+    opacity: .58;
+    transform: scaleX(1) scaleY(.95);
+  }
+  63% {
+    opacity: .19;
+    transform: scaleX(1.01) scaleY(1);
+  }
+  76%, 100% {
+    opacity: 0;
+    transform: scaleX(1.01) scaleY(1);
+  }
+}
+
+@keyframes crt-blackout-release {
+  0%, 38% { opacity: 1; }
+  48% { opacity: .96; }
+  54% { opacity: .35; }
+  59% { opacity: .72; }
+  64% { opacity: .12; }
+  70%, 100% { opacity: 0; }
+}
+
+@keyframes crt-content-wake {
+  0%, 47% {
+    opacity: 0;
+    filter: brightness(.3) contrast(1.45) saturate(.6);
+    transform: scale(1.014, .97);
+  }
+  53% {
+    opacity: .16;
+    filter: brightness(1.8) contrast(1.35) saturate(.7);
+    transform: scale(1.01, .985);
+  }
+  58% {
+    opacity: .78;
+    filter: brightness(.72) contrast(1.28) saturate(.82);
+  }
+  62% {
+    opacity: .35;
+    filter: brightness(1.55) contrast(1.22) saturate(.9);
+  }
+  67% {
+    opacity: .92;
+    filter: brightness(.88) contrast(1.16) saturate(.94);
+  }
+  73% {
+    opacity: .74;
+    filter: brightness(1.13) contrast(1.08) saturate(.98);
+  }
+  82%, 100% {
+    opacity: 1;
+    filter: brightness(1) contrast(1) saturate(1);
+    transform: scale(1);
+  }
+}
+
+@keyframes crt-scanline-settle {
+  0%, 46% { opacity: .02; }
+  54% { opacity: .24; }
+  62% { opacity: .13; }
+  74% { opacity: .09; }
+  100% { opacity: .065; }
+}
+
 /* Intro keeps the original physical computer as the focal point. */
 .intro-footer { position: absolute; bottom: 27px; left: 34px; right: 34px; z-index: 200; display: flex; justify-content: space-between; align-items: flex-end; color: #ecece0; pointer-events: none; }
 .intro-footer > div > .eyebrow { color: #d4b392; font-size: 9px; }
