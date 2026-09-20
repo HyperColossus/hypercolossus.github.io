@@ -109,7 +109,7 @@ function PhysicalPowerButton({ onPower, disabled }) {
     >
       {/* Dark recessed slot behind the switch. */}
       <mesh position={[0, 0, -0.009]}>
-        <boxGeometry args={[0.112, 0.038, 0.014]} />
+        <boxGeometry args={[0.082, 0.03, 0.012]} />
         <meshStandardMaterial
           color="#202228"
           roughness={0.86}
@@ -119,7 +119,7 @@ function PhysicalPowerButton({ onPower, disabled }) {
 
       {/* Large grey horizontal hardware switch, matching the reference. */}
       <mesh ref={capRef} rotation={[0, 0, Math.PI / 2]}>
-        <capsuleGeometry args={[0.014, 0.058, 8, 18]} />
+        <capsuleGeometry args={[0.011, 0.041, 8, 18]} />
         <meshStandardMaterial
           color={hovered && !disabled ? "#9a9ca3" : "#7f8188"}
           roughness={0.76}
@@ -129,7 +129,7 @@ function PhysicalPowerButton({ onPower, disabled }) {
 
       {/* Larger invisible hit area keeps the real-looking switch easy to press. */}
       <mesh position={[0, 0, 0.012]}>
-        <boxGeometry args={[0.14, 0.065, 0.045]} />
+        <boxGeometry args={[0.11, 0.052, 0.04]} />
         <meshBasicMaterial transparent opacity={0} depthWrite={false} />
       </mesh>
     </group>
