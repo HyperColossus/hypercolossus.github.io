@@ -113,7 +113,7 @@ function PhysicalPowerButton({ onPower, disabled }) {
       onPointerOut={() => setHovered(false)}
       onClick={handlePower}
     >
-      <mesh position={[0, 0, -0.006]}>
+      <mesh position={[0, 0, -0.006]} rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[0.026, 0.026, 0.012, 32]} />
         <meshStandardMaterial color="#15171d" roughness={0.7} metalness={0.25} />
       </mesh>
