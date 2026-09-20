@@ -184,8 +184,8 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
   isolation: isolate;
   box-shadow:
     inset 0 0 34px #000,
-    0 0 18px rgba(88, 101, 242, .10),
-    0 0 52px rgba(88, 101, 242, .04);
+    0 0 4px rgba(88, 101, 242, .015),
+    0 0 10px rgba(88, 101, 242, .008);
 }
 
 .crt-screen-content {
@@ -302,14 +302,14 @@ em { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; }
   0%, 100% {
     box-shadow:
       inset 0 0 34px #000,
-      0 0 15px rgba(88, 101, 242, .08),
-      0 0 42px rgba(88, 101, 242, .035);
+      0 0 4px rgba(88, 101, 242, .015),
+      0 0 10px rgba(88, 101, 242, .008);
   }
   50% {
     box-shadow:
       inset 0 0 32px #000,
-      0 0 23px rgba(112, 128, 255, .15),
-      0 0 62px rgba(88, 101, 242, .06);
+      0 0 7px rgba(112, 128, 255, .028),
+      0 0 16px rgba(88, 101, 242, .012);
   }
 }
 
