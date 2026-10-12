@@ -18,7 +18,7 @@ async function fromDatabase() {
   await db.connect();
   try {
     await db.query('BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ READ ONLY');
-    const cards = await db.query(`SELECT id,card_type,card_supertype,rules_text,is_alt,is_overnumbered,is_signature
+    const cards = await db.query(`SELECT id,name,set_id AS set,tcg_product_id AS tcg,card_type,card_supertype,rules_text,is_alt,is_overnumbered,is_signature
       FROM riftbound.cards ORDER BY id`);
     const sealed = await db.query(`SELECT s.id,s.set_id,s.name,s.kind,s.pack_count,s.msrp,p.market_price,
       to_char(p.price_date,'YYYY-MM-DD') AS price_date
@@ -35,7 +35,7 @@ async function fromExport(file) {
   if ((await stat(file)).size > 20 * 1024 * 1024) throw new Error('Export is too large');
   const data = JSON.parse(await readFile(file, 'utf8'));
   return { source: `export:${data.source ?? 'unknown'}@${data.fetched ?? 'unknown'}`,
-    cards: normalizeCards(data.cards).map(card => ({ id: card.id, card_type: card.cardType, card_supertype: card.cardSupertype,
+    cards: normalizeCards(data.cards).map(card => ({ id: card.id, name: card.name, set: card.setId, tcg: card.product, card_type: card.cardType, card_supertype: card.cardSupertype,
       rules_text: card.rulesText, is_alt: card.alt, is_overnumbered: card.over, is_signature: card.sig })),
     sealed: [] };
 }
@@ -47,8 +47,11 @@ try {
   // Keep only cards with something worth bundling, and drop empty fields to stay small.
   const cards = data.cards
     .filter(card => card.card_type || card.card_supertype || card.rules_text || card.is_alt || card.is_overnumbered || card.is_signature)
+    .map(card => ({ ...card, tcg: card.tcg == null ? null : String(card.tcg) }))
     .map(card => Object.fromEntries(Object.entries(card).filter(([, value]) => value !== null && value !== false)));
-  const snapshot = { version: 1, generated_at: new Date().toISOString(), source: data.source, cards, sealed: data.sealed };
+  const sets = {};
+  for (const card of cards) if (card.set) sets[card.set] = (sets[card.set] ?? 0) + 1;
+  const snapshot = { version: 1, generated_at: new Date().toISOString(), source: data.source, sets, cards, sealed: data.sealed };
   validateCatalog(snapshot);
   // Never replace a good snapshot with an empty or much smaller one (e.g. a fresh, unimported database).
   const previous = await readFile(OUTPUT, 'utf8').then(JSON.parse).catch(() => null);

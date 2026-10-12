@@ -70,3 +70,13 @@ This reads the local Docker database (read-only) and writes `server/riftbound/ca
 The committed snapshot was built on October 12 from the saved RiftHunt export: 1,432 cards with details, 0 sealed products. The sheet's 213 DotGG-only printings have no type, so the simulator excludes them and the battlefield name list remains their landscape fallback. Rerun the command against the database to add sealed products. Retail/Market ROI needs either sealed records or costs entered in the calculator.
 
 The Worker validates the snapshot and fails with a sanitized 503 if it is malformed. Cards absent from the snapshot keep unknown details rather than guessed ones.
+
+## Automatic catalog watch (Radiance)
+
+Radiance (RAD) releases October 23, 2026 (prerelease October 16–22). Until RiftHunt publishes it, the sheet's 154 RAD rows have no card type or rules text.
+
+Run `scripts\install-catalog-watch.cmd` once. It registers the Windows scheduled task **HyperColossus Riftbound catalog watch**, daily at 9:07 AM, which catches up at the next login if the PC was off. Each run downloads RiftHunt's bulk catalog (no Docker needed). If any set has more typed cards than the bundled snapshot, it rebuilds the snapshot from that download, runs `npm test` (restoring the old snapshot on failure), commits only `catalog-snapshot.json` and pushes. Results are logged to `outputs\catalog-watch\watch.log`. `node scripts/riftbound-catalog-watch.mjs --dry-run` checks without writing.
+
+Sheet rows from other providers (such as `dotgg:RAD-001`) match RiftHunt cards by TCGPlayer ID, then by card name. Name matches copy type and rules text only. Showcase or non-numeric collector numbers are marked alternate, so they stay out of the booster model.
+
+The watch updates the repository, not the live site. Rebuild and deploy to publish. Remove it with `schtasks /Delete /TN "HyperColossus Riftbound catalog watch" /F`.

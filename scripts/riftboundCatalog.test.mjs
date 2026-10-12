@@ -67,3 +67,27 @@ test('Worker serves set tools from sheet and catalog without database access', a
   const failed = await broken.fetch(new Request('https://site.test/api/riftbound/set-tools?set=VEN'), env);
   assert.equal(failed.status, 503);
 });
+
+test('catalog growth reports only sets with more typed cards than the snapshot', async () => {
+  const { catalogGrowth } = await import('../server/riftbound/catalog.js');
+  const cards = [{ setId: 'RAD' }, { setId: 'RAD' }, { setId: 'OGN' }];
+  assert.deepEqual(catalogGrowth({ OGN: 1, RAD: 0 }, cards), { RAD: { before: 0, after: 2 } });
+  assert.deepEqual(catalogGrowth({ OGN: 5, RAD: 2 }, cards), {});
+});
+
+test('sheet rows with other IDs match by TCGPlayer product, then by name; name matches stay out of boosters', () => {
+  const checked = validateCatalog({ ...catalog, cards: [
+    { id: 'rh-1', name: 'Amateur Demolitionist', set: 'RAD', tcg: '722276', card_type: 'Unit', is_signature: true },
+    { id: 'rh-2', name: "Kai'Sa - Rebel", set: 'RAD', card_type: 'Legend', rules_text: 'Rebel.' },
+  ] });
+  const [byTcg, byName, showcase, none] = applyCatalog([
+    card('dotgg:RAD-001', { name: 'Amateur Demolitionist', tcg_product_id: '722276', set_id: 'RAD', collector_number: '1' }),
+    card('dotgg:RAD-200', { name: "Kai'Sa - Rebel", set_id: 'RAD', collector_number: '200', rarity: 'Rare' }),
+    card('dotgg:RAD-SP4', { name: "Kai'Sa - Rebel (Showcase)", set_id: 'RAD', collector_number: 'SP4', rarity: 'Showcase' }),
+    card('dotgg:RAD-999', { name: 'Unknown', set_id: 'RAD' }),
+  ], checked);
+  assert.equal(byTcg.card_type, 'Unit'); assert.equal(byTcg.is_signature, true);
+  assert.equal(byName.card_type, 'Legend'); assert.equal(byName.rules_text, 'Rebel.'); assert.equal(byName.is_alt, false);
+  assert.equal(showcase.card_type, 'Legend'); assert.equal(showcase.is_alt, true);
+  assert.equal(none.card_type, null);
+});

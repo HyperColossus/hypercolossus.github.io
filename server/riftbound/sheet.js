@@ -51,9 +51,10 @@ export function parseInventorySheet(document, refreshedAt = new Date().toISOStri
       const image = get('Artwork URL');
       if (!blank(image) && (typeof image !== 'string' || !/^https:\/\//.test(image))) throw new Error('Invalid artwork URL');
       const collector = get('Set number');
+      const tcg = labels.includes('TCGPlayer ID') ? get('TCGPlayer ID') : null;
       cards.push({ id,name,rarity:String(get('Rarity') ?? ''),domains:String(get('Domains') ?? '').split(/[,/]/).map(s => s.trim()).filter(Boolean),
         energy:number('Energy',true,99,true),image_url:image || null,set_id:title,set_name:setName,collector_number:blank(collector)?null:String(collector),
-        normal_price,foil_price,price_date,normal_owned:normal,foil_owned:foil,quantity:normal+foil,is_foil:null,synced_at:refreshedAt,
+        tcg_product_id:blank(tcg)?null:String(tcg),normal_price,foil_price,price_date,normal_owned:normal,foil_owned:foil,quantity:normal+foil,is_foil:null,synced_at:refreshedAt,
         card_type:null,card_supertype:null,rules_text:null,is_alt:false,is_overnumbered:false,is_signature:false });
     }
   }
