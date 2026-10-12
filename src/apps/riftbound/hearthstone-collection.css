@@ -1,0 +1,154 @@
+/* Collection-manager composition: carved timber, parchment and a brass deck rack. */
+.rb-standalone { background: radial-gradient(ellipse at center, #37251a, #100d0b 85%); }
+.rb-standalone > [data-app="riftbound"] { max-width: 1440px; margin: 24px auto; }
+[data-app="riftbound"] {
+  padding: 18px 44px 14px; border: 12px ridge #684724; border-radius: 18px;
+  background: repeating-linear-gradient(91deg,#21140df0 0 5px,#4e321df0 8px 12px,#2e1c12f0 18px 31px),linear-gradient(#83552d,#281a12);
+  box-shadow: inset 0 0 0 3px #b08b4d,inset 0 0 35px 15px #090604,0 20px 60px #000b;
+}
+[data-app="riftbound"] .rb-heading { min-height: 0; padding: 0 4px 10px; gap: 10px; }
+[data-app="riftbound"] .rb-mark { font-size: 26px; width: 36px; height: 36px; }
+[data-app="riftbound"] .rb-title-lockup h1 { font-size: 25px; line-height: 1; }
+[data-app="riftbound"] .rb-title-lockup p { font-size: 8px; margin: 0 0 3px; }
+[data-app="riftbound"] .rb-title-lockup > span { display: none; }
+[data-app="riftbound"] .rb-tabs { padding: 0 0 10px; border: 0; gap: 5px; }
+[data-app="riftbound"] .rb-tabs button { font: bold 12px Georgia,serif; padding: 6px 12px; border: 2px ridge #ad8546; background: linear-gradient(#775837,#342419); box-shadow: inset 0 1px #e7c38a,0 2px 3px #0008; }
+[data-app="riftbound"] .rb-tabs button[aria-pressed="true"] { background: linear-gradient(#e5cd93,#aa8350); color: #302315; text-shadow: 0 1px #fff6; }
+[data-app="riftbound"] .rb-browser { padding-top: 3px; }
+[data-app="riftbound"] .rb-collection-layout { grid-template-columns: minmax(0,1fr) 218px; gap: 14px; align-items: stretch; }
+[data-app="riftbound"] .rb-collection-main { position: relative; background: #b2935e; border: 5px ridge #88643b; border-radius: 12px 12px 5px 5px; box-shadow: 0 3px 8px #080402,inset 0 0 14px #593619; }
+[data-app="riftbound"] .rb-collection-controls { padding: 0 14px; min-height: 38px; background: linear-gradient(#725033,#3a291a); border-bottom: 2px solid #573d23; border-radius: 5px 5px 0 0; align-items: end; }
+[data-app="riftbound"] .rb-color-tabs { gap: 4px; }
+[data-app="riftbound"] .rb-color-tabs button { width: 35px; min-height: 34px; border: 2px ridge #b89451; background: radial-gradient(ellipse at center,#557485,#152f3b 65%,#17100a); box-shadow: inset 0 0 3px #e5d69a,0 -2px 3px #0006; }
+[data-app="riftbound"] .rb-color-tabs button[aria-pressed="true"] { border-color: #ffe5a0; box-shadow: 0 0 8px #ffd86799,inset 0 0 5px #e9c66d; }
+[data-app="riftbound"] .rb-set-tab { width: 180px; font-size: 0; gap: 0; }
+[data-app="riftbound"] .rb-set-tab select { min-height: 31px; font: bold 12px Georgia,serif; color: #392b19; background: linear-gradient(#e3d7b3,#b6a076); border: 3px ridge #8b704b; }
+[data-app="riftbound"] .rb-collection-heading { position: relative; z-index: 1; padding: 8px 20px; min-height: 42px; background: linear-gradient(#d6c396,#b89d6d); box-shadow: inset 0 -1px #88703e; }
+[data-app="riftbound"] .rb-collection-heading h2 { color: #3a2918; font: bold 19px Georgia,serif; text-align: center; flex: 1; text-shadow: 0 1px #f0e0b7; }
+[data-app="riftbound"] .rb-ownership-toggle button { color: #3c2918; background: linear-gradient(#eedcab,#bb965e); border: 2px ridge #947243; font: bold 11px Georgia,serif; padding: 5px 9px; }
+[data-app="riftbound"] .rb-book { padding: 14px 24px 8px; background: #c4ad7c; }
+[data-app="riftbound"] .rb-book::before { background: url('/riftbound/collection-book.webp') center / 100% 100% no-repeat; opacity: .38; filter: sepia(.4) saturate(.5); }
+[data-app="riftbound"] .rb-results { padding: 0; }
+[data-app="riftbound"] .rb-count { font-size: 10px; margin-bottom: 12px; color: #5b4225; }
+[data-app="riftbound"] .rb-grid { gap: 24px 26px; padding: 0 4px; }
+[data-app="riftbound"] .rb-card, [data-app="riftbound"] .rb-card-slot { max-width: 175px; }
+[data-app="riftbound"] .rb-card-caption { margin-top: 3px; min-height: 22px; font: bold 12px Georgia,serif; }
+[data-app="riftbound"] .rb-card-caption > span { background: linear-gradient(#a88a51,#c3a265); border-radius: 0 0 10px 10px; padding: 2px 10px; color: #f0d59d; text-shadow: 0 1px 2px #452c16; }
+[data-app="riftbound"] .rb-quick-add { min-height: 21px; width: 21px; opacity: .7; }
+[data-app="riftbound"] .rb-pagination { justify-content: center; margin-top: 10px; color: #715329; font: bold 12px Georgia,serif; }
+[data-app="riftbound"] .rb-pagination button { min-width: 30px; padding: 3px 10px; color: #463018; background: linear-gradient(#e0c691,#ab874e); border: 2px ridge #8e6c35; }
+[data-app="riftbound"] .rb-pagination button span { display: none; }
+[data-app="riftbound"] .rb-toolbox { margin: 0; padding: 9px 12px; border-top: 5px ridge #87633b; background: linear-gradient(#443021,#261a13); box-shadow: inset 0 3px 8px #090502; }
+[data-app="riftbound"] .rb-energy-filter { margin-bottom: 8px; gap: 4px; flex-wrap: wrap; }
+[data-app="riftbound"] .rb-energy-filter > span { color: #cfb27c; font-size: 10px; }
+[data-app="riftbound"] .rb-energy-filter > button { min-width: 26px; min-height: 26px; padding: 3px; font: bold 12px Georgia,serif; color: #e8f6ff; background: radial-gradient(ellipse at 40% 25%,#97d7ff,#2863a1 55%,#12233c 75%); border: 2px ridge #99b5cb; clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); text-shadow: 0 1px 2px #091b34; }
+[data-app="riftbound"] .rb-energy-filter > button[aria-pressed="true"] { filter: brightness(1.5); }
+[data-app="riftbound"] .rb-energy-filter label { font-size: 9px; color: #d3b981; }
+[data-app="riftbound"] .rb-energy-filter input { width: 40px; min-height: 24px; }
+[data-app="riftbound"] .rb-filters { gap: 8px; align-items: end; grid-template-columns: minmax(95px,1fr) minmax(130px,2fr) auto; }
+[data-app="riftbound"] .rb-filters label { color: #d5ba85; font-size: 9px; }
+[data-app="riftbound"] .rb-filters input,[data-app="riftbound"] .rb-filters select { min-height: 30px; background: #30171a; color: #f0d4a3; border: 2px ridge #8c5b4f; box-shadow: inset 0 2px 6px #100608; }
+[data-app="riftbound"] .rb-clear { background: linear-gradient(#e7d8ae,#aa8a56); color: #39291b; font: bold 11px Georgia,serif; padding: 6px 8px; }
+[data-app="riftbound"] .rb-decks { margin-top: 0; padding: 9px; background: repeating-linear-gradient(94deg,#4c3322,#291d15 6px,#503826 14px); border: 6px ridge #98774b; border-radius: 7px; box-shadow: inset 0 0 12px #0b0704,0 3px 8px #080402; }
+[data-app="riftbound"] .rb-decks h2 { padding: 5px 3px; margin: 0 0 12px; border: 4px ridge #7e7560; border-radius: 7px; background: linear-gradient(#c9c3ab,#8e8877); color: #352e22; font: bold 16px Georgia,serif; text-shadow: 0 1px #e4dfcc; text-align: center; }
+[data-app="riftbound"] .rb-deck-create { gap: 6px; margin: 10px 0; }
+[data-app="riftbound"] .rb-deck-list button { min-height: 51px; border: 3px ridge #a68b45; border-radius: 9px; background: radial-gradient(ellipse at 80% 20%,#668144,#29422e 45%,#151a11 85%); box-shadow: 0 3px 3px #0008,inset 0 1px #dac980; color: #fff0c4; font: bold 13px Georgia,serif; }
+[data-app="riftbound"] .rb-deck-list { max-height: 350px; }
+[data-app="riftbound"] .rb-deck-list small { font: 10px Georgia,serif; color: #d5bc85; }
+[data-app="riftbound"] .rb-deck-note { font-size: 10px; color: #cbb48c; }
+[data-app="riftbound"] .rb-collection-extras { margin: 12px 0 0; border-color: #b08a4544; }
+[data-app="riftbound"] .rb-footer { font-size: 10px; margin-top: 10px; }
+@container (max-width: 1000px) {
+  [data-app="riftbound"] .rb-collection-layout { grid-template-columns: minmax(0,1fr) 190px; gap: 9px; }
+  [data-app="riftbound"] .rb-grid { gap: 22px 14px; }
+  [data-app="riftbound"] .rb-book { padding-inline: 15px; }
+  [data-app="riftbound"] .rb-color-tabs button { width: 29px; }
+}
+@media(max-width: 900px) { .rb-standalone > [data-app="riftbound"] { margin: 8px; padding: 12px; border-width: 7px; } }
+@container (max-width: 760px) {
+  [data-app="riftbound"] .rb-collection-layout { grid-template-columns: minmax(0,1fr); }
+  [data-app="riftbound"] .rb-decks { margin-top: 8px; }
+}
+@container (max-width: 520px) {
+  [data-app="riftbound"] .rb-collection-controls { flex-wrap: wrap; padding: 7px; gap: 8px; }
+  [data-app="riftbound"] .rb-set-tab { width: 100%; }
+  [data-app="riftbound"] .rb-collection-heading { padding: 7px; }
+  [data-app="riftbound"] .rb-collection-heading h2 { font-size: 16px; }
+  [data-app="riftbound"] .rb-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px 12px; }
+  [data-app="riftbound"] .rb-filters { grid-template-columns: 1fr; }
+  [data-app="riftbound"] .rb-search,[data-app="riftbound"] .rb-filters .rb-clear { grid-column: 1; }
+}
+
+/* Measured reference pass: the parchment sits inside the full-height tavern. */
+.rb-standalone > [data-app="riftbound"] { max-width: 1920px; margin: 0 auto; }
+[data-app="riftbound"] { --hs-paper:#ecd9a4; --hs-ink:#332413; --hs-brass:#ba9451; --hs-red:#3e110e; --hs-timber:#312216; display:flex; flex-direction:column; min-height:100dvh; padding:12px clamp(24px,12vw,230px) 14px; border:0; border-radius:0; background:url('/riftbound/tavern-frame.svg') center / 100% 100% no-repeat; box-shadow:none; }
+[data-app="riftbound"] .rb-heading { display:none; }
+[data-app="riftbound"] .rb-tabs { order:2; justify-content:center; padding:12px 0 0; }
+[data-app="riftbound"] .rb-browser { order:1; padding:0; }
+[data-app="riftbound"] .rb-footer { order:3; }
+[data-app="riftbound"] .rb-collection-layout { grid-template-columns:minmax(0,1fr) 260px; gap:18px; }
+[data-app="riftbound"] .rb-collection-main { display:grid; grid-template-rows:44px 66px auto auto; background:transparent; border:0; border-radius:0; box-shadow:none; position:relative; isolation:isolate; }
+[data-app="riftbound"] .rb-collection-main::before { content:''; position:absolute; z-index:-1; inset:42px 0 76px; background:url('/riftbound/collection-book.webp') center / 100% 100% no-repeat; filter:drop-shadow(7px 8px 5px #000b); }
+[data-app="riftbound"] .rb-collection-controls { background:transparent; border:0; padding:0 25px; }
+[data-app="riftbound"] .rb-color-tabs button { height:44px; width:44px; border-radius:15px 15px 0 0; border-width:3px; }
+[data-app="riftbound"] .rb-collection-heading { background:transparent; box-shadow:none; padding:8px 35px; }
+[data-app="riftbound"] .rb-collection-heading h2 { position:relative; flex:0 1 310px; margin:auto; padding:9px 25px; border:3px double #af9869; border-radius:24px 5px; font:bold 25px/1 Georgia,serif; background:#e7d39b; box-shadow:0 0 0 3px #c8b17a88; }
+[data-app="riftbound"] .rb-collection-heading h2::before,[data-app="riftbound"] .rb-collection-heading h2::after { content:'❧'; position:absolute; top:-3px; font-size:40px; color:#ac9360; }
+[data-app="riftbound"] .rb-collection-heading h2::before { left:-45px; }
+[data-app="riftbound"] .rb-collection-heading h2::after { right:-45px; transform:scaleX(-1); }
+[data-app="riftbound"] .rb-ownership-toggle { position:absolute; right:20px; top:4px; }
+[data-app="riftbound"] .rb-ownership-toggle button { padding:3px 7px; font-size:10px; }
+[data-app="riftbound"] .rb-book { padding:12px 42px 16px; background:transparent; }
+[data-app="riftbound"] .rb-book::before { display:none; }
+[data-app="riftbound"] .rb-grid { gap:34px 30px; padding:0; }
+[data-app="riftbound"] .rb-card,[data-app="riftbound"] .rb-card-slot { max-width:185px; }
+[data-app="riftbound"] .rb-count { margin:0 0 10px; }
+[data-app="riftbound"] .rb-pagination { position:relative; margin-top:15px; min-height:30px; }
+[data-app="riftbound"] .rb-pagination button { font-size:25px; line-height:1; border-radius:8px; }
+[data-app="riftbound"] .rb-pagination button:first-child { margin-right:auto; }
+[data-app="riftbound"] .rb-pagination button:last-child { margin-left:auto; }
+[data-app="riftbound"] .rb-toolbox { padding:8px 18px; background:transparent; border:0; box-shadow:none; }
+[data-app="riftbound"] .rb-energy-filter { margin-bottom:5px; }
+[data-app="riftbound"] .rb-decks { padding:8px 12px; border:9px ridge #795437; background:linear-gradient(90deg,#765137,#35231b 10%,#2d211b 86%,#785538); border-radius:24px 10px 18px 16px; box-shadow:inset 0 0 0 3px #b08860,inset 0 0 20px #060403,4px 8px 5px #000b; }
+[data-app="riftbound"] .rb-decks h2 { font-size:20px; margin:0 0 8px; border-radius:14px 4px; box-shadow:0 3px 5px #120b08; }
+[data-app="riftbound"] .rb-deck-help { font-size:11px; color:#d6bd8e; margin:0 4px 10px; }
+[data-app="riftbound"] .rb-deck-help summary { cursor:pointer; text-align:center; padding:3px; }
+[data-app="riftbound"] .rb-deck-list { max-height:600px; padding:0; gap:9px; }
+[data-app="riftbound"] .rb-deck-empty-slots { display:grid; gap:9px; }
+[data-app="riftbound"] .rb-deck-empty-slot { height:72px; width:100%; border:6px ridge #c3a264; border-radius:4px; display:grid; place-content:center; position:relative; background:repeating-linear-gradient(2deg,#59341d 0 8px,#5e3922 11px 19px,#351d12 22px 24px); box-shadow:0 0 0 3px #242030,inset 0 0 12px #120904,0 3px 4px #000b; }
+[data-app="riftbound"] .rb-deck-empty-slot span:first-child { font-size:34px; line-height:1; color:#ba9155; text-shadow:0 2px #090403,1px 0 #efd9a3; }
+[data-app="riftbound"] .rb-deck-empty-slot span:last-child { font-size:10px; color:#e4c89a; }
+[data-app="riftbound"] .rb-deck-list button { min-height:72px; border-width:6px; }
+[data-app="riftbound"] .rb-deck-note { border:0; padding:8px 0 0; }
+[data-app="riftbound"] .rb-collection-extras { font-size:11px; margin:4px 0 0; padding:0; border:0; }
+[data-app="riftbound"] button:focus-visible,[data-app="riftbound"] summary:focus-visible { outline:3px solid #ffe8a1; outline-offset:3px; }
+@media(max-width:1300px) { [data-app="riftbound"] { padding-inline:7vw; } }
+@container(max-width:1100px) {
+  [data-app="riftbound"] .rb-collection-layout { grid-template-columns:minmax(0,1fr) 205px; gap:12px; }
+  [data-app="riftbound"] .rb-book { padding-inline:25px; }
+  [data-app="riftbound"] .rb-grid { gap:24px 18px; }
+  [data-app="riftbound"] .rb-deck-empty-slot,[data-app="riftbound"] .rb-deck-list button { min-height:55px; height:55px; }
+}
+@media(max-width:900px) { .rb-standalone > [data-app="riftbound"] { margin:0; padding:12px 20px; border:0; } }
+@container(max-width:760px) {
+  [data-app="riftbound"] .rb-collection-layout { grid-template-columns:minmax(0,1fr); }
+  [data-app="riftbound"] .rb-deck-empty-slots { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  [data-app="riftbound"] .rb-collection-heading h2 { font-size:20px; flex-basis:200px; }
+  [data-app="riftbound"] .rb-color-tabs button { width:34px; }
+}
+@container(max-width:520px) {
+  [data-app="riftbound"] .rb-collection-main { grid-template-rows:auto 75px auto auto; }
+  [data-app="riftbound"] .rb-collection-main::before { top:90px; bottom:190px; }
+  [data-app="riftbound"] .rb-collection-heading { padding-top:30px; }
+  [data-app="riftbound"] .rb-collection-heading h2::before,[data-app="riftbound"] .rb-collection-heading h2::after { display:none; }
+  [data-app="riftbound"] .rb-ownership-toggle { top:8px; }
+  [data-app="riftbound"] .rb-book { padding-inline:20px; }
+  [data-app="riftbound"] .rb-collection-controls { padding:0 10px; }
+}
+
+/* The binder surface belongs to the two page faces, including while turning. */
+[data-app="riftbound"] .rb-collection-main::before { display:none; }
+[data-app="riftbound"] .rb-book { padding:12px 4px 16px; }
+[data-app="riftbound"] .rb-count { min-height:15px; color:#dfc693; gap:8px; flex-wrap:wrap; }
+[data-app="riftbound"] .rb-count b, [data-app="riftbound"] .rb-count > span:last-child { color:#dfc693; }
+[data-app="riftbound"] .rb-pagination > span { color:#dfc693; font:12px system-ui,sans-serif; text-align:center; }

@@ -1,0 +1,195 @@
+/* The browser's built-in sites (see browser/sites.jsx). Each is scoped to its own root class.
+   All are original looks in the spirit of mid-2000s sites; no third-party logos or assets. */
+
+.net-loading { display: flex; align-items: center; gap: 8px; padding: 18px; color: #555; font: 12px Tahoma, 'Segoe UI', sans-serif; }
+.net-spinner { display: inline-block; flex-shrink: 0; width: 14px; height: 14px; border: 2px solid #c9d6ea; border-top-color: #1f5fd6; border-radius: 50%; animation: xp-spin .7s linear infinite; }
+.net-spinner.is-tab { width: 11px; height: 11px; }
+
+/* ---------- Fizz Search: a 2004-style search engine ---------- */
+.fizz { min-height: 100%; padding: 14px 18px 30px; color: #000; background: #fff; font: 13px/1.4 Arial, Helvetica, sans-serif; }
+.fizz a { color: #1a0dab; text-decoration: underline; cursor: pointer; }
+.fizz a:hover { color: #c00; }
+.fizz-logo { display: inline-flex; align-items: baseline; font: 700 64px/1 Georgia, 'Times New Roman', serif; letter-spacing: -2px; text-shadow: 2px 2px 0 #0002; }
+.fizz-logo b:nth-child(1) { color: #d9472b; }
+.fizz-logo b:nth-child(2) { color: #f0a30a; }
+.fizz-logo b:nth-child(3) { color: #1f9d55; }
+.fizz-logo b:nth-child(4) { color: #1f5fd6; }
+.fizz-logo i { color: #d9472b; font-style: normal; font-size: .8em; margin-left: 2px; }
+.fizz-logo.is-small { font-size: 30px; letter-spacing: -1px; }
+.fizz-home { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding-top: 11%; text-align: center; }
+.fizz-tag { color: #666; font-size: 12px; margin-top: -4px; }
+.fizz-form { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.fizz-form input { width: 380px; max-width: 100%; height: 26px; padding: 2px 6px; border: 1px solid; border-color: #7a7a7a #c3c3c3 #dddddd #9a9a9a; font: 14px Arial, sans-serif; outline: 0; }
+.fizz-form.is-big { flex-direction: column; }
+.fizz-form.is-big input { width: min(460px, 80cqw); height: 30px; font-size: 15px; }
+.fizz-form.is-big > div, .fizz-form.is-big { gap: 10px; }
+.fizz-btn { height: 26px; padding: 0 12px; border: 1px solid #999; border-radius: 2px; background: linear-gradient(#fdfdfd, #e2e2e2); font: 13px Arial, sans-serif; color: #000; }
+.fizz-btn:hover { border-color: #666; }
+.fizz-form.is-big .fizz-btn { margin: 0 3px; }
+.fizz-home .fizz-form.is-big { flex-direction: row; justify-content: center; }
+.fizz-home .fizz-form.is-big input { flex-basis: 100%; }
+.fizz-try { font-size: 12px; color: #444; }
+.fizz-foot { margin-top: 18px; font-size: 11px; color: #777; }
+.fizz-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding-bottom: 10px; border-bottom: 1px solid #c9d7f1; }
+.fizz-home-link { text-decoration: none !important; }
+.fizz-results { max-width: 620px; padding-top: 6px; }
+.fizz-section { margin-top: 14px; }
+.fizz-section h2 { display: flex; align-items: center; gap: 5px; padding: 3px 6px; background: #e5ecf9; border-top: 1px solid #3366cc; font: 700 12px Arial, sans-serif; color: #000; }
+.fizz-section h2 svg { color: #3366cc; }
+.fizz-section ol { list-style: none; margin: 0; padding: 0; }
+.fizz-result { margin: 12px 0 0; }
+.fizz-title { font-size: 15px; }
+.fizz-result p { margin: 2px 0 0; color: #222; font-size: 12.5px; overflow-wrap: anywhere; }
+.fizz-result cite { display: block; font-style: normal; font-size: 12px; color: #008000; overflow-wrap: anywhere; }
+.fizz-via { display: flex; align-items: center; gap: 6px; max-width: 620px; margin: 10px 0 0; padding: 6px 10px; border: 1px solid #e6d27a; background: #fffbe0; font-size: 12px; color: #333; }
+.fizz-home .fizz-via { margin: 0 0 8px; }
+.fizz-note { margin-top: 8px; color: #666; font-size: 12px; }
+
+/* ---------- GitHub: an original, circa-2010 code-hosting look ---------- */
+.gh { min-height: 100%; background: #fff; color: #333; font: 13px/1.5 Helvetica, Arial, sans-serif; }
+.gh a { color: #4183c4; text-decoration: none; cursor: pointer; }
+.gh a:hover { text-decoration: underline; }
+.gh-bar { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: linear-gradient(#fafafa, #e6e6e6); border-bottom: 1px solid #c9c9c9; }
+.gh-brand { font: 700 18px/1 'Helvetica Neue', Arial, sans-serif; letter-spacing: -.5px; color: #333 !important; }
+.gh-crumb { font-size: 15px; color: #666; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.gh-page { padding: 16px; max-width: 900px; }
+.gh-note { display: flex; align-items: center; gap: 6px; margin-bottom: 12px; padding: 6px 10px; border: 1px solid #e6d27a; background: #fffbe0; font-size: 12px; }
+.gh-profile { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 22px; align-items: start; }
+.gh-card img { width: 180px; height: 180px; border: 1px solid #ddd; border-radius: 6px; }
+.gh-card img.is-missing { visibility: hidden; }
+.gh-card h1 { margin-top: 10px; font: 700 20px/1.2 Helvetica, Arial, sans-serif; color: #333; }
+.gh-login { font-size: 16px; color: #777; margin-bottom: 8px; }
+.gh-meta { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 4px; font-size: 12px; color: #777; }
+.gh-repos h2 { padding-bottom: 6px; border-bottom: 1px solid #ddd; font: 700 15px Helvetica, Arial, sans-serif; }
+.gh-count { display: inline-block; min-width: 18px; padding: 0 6px; margin-left: 4px; border-radius: 9px; background: #e6e6e6; font-size: 11px; text-align: center; }
+.gh-repos ul { list-style: none; margin: 0; padding: 0; }
+.gh-repos li { padding: 14px 0; border-bottom: 1px solid #eee; }
+.gh-repo-name { font-size: 17px; font-weight: 700; }
+.gh-repos li p { margin-top: 4px; }
+.gh-pill { margin-left: 8px; padding: 0 6px; border: 1px solid #ccc; border-radius: 9px; font-size: 10px; color: #777; vertical-align: 2px; }
+.gh-lang { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #f1e05a; }
+.gh-repo-head { margin-bottom: 14px; }
+.gh-desc { font-size: 15px; }
+.gh-files { width: 100%; border: 1px solid #ccc; border-radius: 3px; border-collapse: separate; border-spacing: 0; background: #fff; }
+.gh-files td { padding: 5px 8px; border-top: 1px solid #eee; }
+.gh-files tr:first-child td { border-top: 0; }
+.gh-files tr:hover td { background: #f6f8ff; }
+.gh-files td:first-child { width: 24px; color: #777; }
+.gh-files .gh-dir { color: #79a4d6; fill: #cfe0f5; }
+.gh-size { width: 80px; text-align: right; color: #999; font-size: 12px; }
+.gh-readme { margin-top: 18px; border: 1px solid #ccc; border-radius: 3px; }
+.gh-readme h3 { display: flex; align-items: center; gap: 6px; padding: 6px 10px; background: linear-gradient(#fafafa, #eaeaea); border-bottom: 1px solid #ccc; font: 700 12px Helvetica, Arial, sans-serif; }
+.gh-markdown { padding: 14px 20px; overflow-wrap: anywhere; }
+.gh-markdown h1, .gh-markdown h2 { padding-bottom: 4px; border-bottom: 1px solid #eee; margin: 12px 0 8px; font-weight: 700; }
+.gh-markdown h1 { font-size: 24px; } .gh-markdown h2 { font-size: 19px; } .gh-markdown h3 { font-size: 15px; font-weight: 700; margin: 10px 0 6px; }
+.gh-markdown p, .gh-markdown ul, .gh-markdown ol, .gh-markdown pre, .gh-markdown table { margin: 8px 0; }
+.gh-markdown ul { list-style: disc; padding-left: 24px; } .gh-markdown ol { list-style: decimal; padding-left: 24px; }
+.gh-markdown code { padding: 1px 4px; border-radius: 3px; background: #f3f3f3; font: 12px Consolas, 'Courier New', monospace; }
+.gh-markdown pre { padding: 10px; overflow: auto; background: #f8f8f8; border: 1px solid #e5e5e5; }
+.gh-markdown pre code { padding: 0; background: none; }
+.gh-markdown img { max-width: 100%; }
+.gh-markdown .anchor, .gh-markdown .octicon { display: none; }
+.gh-markdown [data-href] { color: #4183c4; cursor: pointer; }
+.gh-markdown table td, .gh-markdown table th { padding: 4px 10px; border: 1px solid #ddd; }
+.gh-file { border: 1px solid #ccc; border-radius: 3px; overflow: hidden; }
+.gh-file-head { padding: 6px 10px; background: linear-gradient(#fafafa, #eaeaea); border-bottom: 1px solid #ccc; font-size: 12px; color: #555; }
+.gh-code { margin: 0; overflow: auto; font: 12px/1.45 Consolas, 'Courier New', monospace; color: #222; tab-size: 2; }
+.gh-line { display: block; white-space: pre; }
+.gh-line i { display: inline-block; width: 44px; padding-right: 10px; margin-right: 10px; text-align: right; font-style: normal; color: #aaa; background: #f7f7f7; border-right: 1px solid #e5e5e5; user-select: none; }
+.gh-image { padding: 16px; text-align: center; background: repeating-conic-gradient(#eee 0 25%, #fff 0 50%) 0 0 / 16px 16px; }
+.gh-image img { max-width: 100%; }
+.gh-empty { padding: 30px 0; text-align: center; color: #666; }
+.gh-empty h1 { font: 700 40px Helvetica, Arial, sans-serif; color: #bbb; }
+
+/* ---------- Wikipedia articles: a classic encyclopedia skin ---------- */
+.wiki { min-height: 100%; background: #f6f6f6; color: #202122; font: 13px/1.6 'Linux Libertine', Georgia, 'Times New Roman', serif; }
+.wiki a, .wiki [data-href] { color: #0645ad; text-decoration: none; cursor: pointer; }
+.wiki a:hover, .wiki [data-href]:hover { text-decoration: underline; }
+.wiki-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; font-family: sans-serif; }
+.wiki-brand { display: flex; flex-direction: column; font: 22px/1 'Linux Libertine', Georgia, serif; color: #000 !important; }
+.wiki-brand small { font: 11px/1.4 sans-serif; color: #555; letter-spacing: .04em; }
+.wiki-search { display: flex; height: 24px; border: 1px solid #a2a9b1; background: #fff; }
+.wiki-search input { width: 160px; padding: 0 6px; border: 0; outline: 0; font: 12px sans-serif; }
+.wiki-search button { width: 24px; display: grid; place-items: center; border-left: 1px solid #c8ccd1; color: #555; }
+.wiki-article { margin: 0 12px 16px; padding: 14px 20px 20px; border: 1px solid #a7d7f9; background: #fff; }
+.wiki-title { padding-bottom: 2px; border-bottom: 1px solid #a2a9b1; font: 26px/1.3 'Linux Libertine', Georgia, 'Times New Roman', serif; }
+.wiki-from { margin: 4px 0 10px; font: 12px sans-serif; color: #54595d; }
+.wiki-content { font: 13.5px/1.6 sans-serif; overflow-wrap: anywhere; }
+.wiki-content h2 { margin: 18px 0 6px; padding-bottom: 2px; border-bottom: 1px solid #a2a9b1; font: 21px/1.3 'Linux Libertine', Georgia, serif; }
+.wiki-content h3 { margin: 12px 0 4px; font: 700 14.5px sans-serif; }
+.wiki-content p { margin: 6px 0 10px; }
+.wiki-content ul { list-style: disc; padding-left: 22px; margin: 4px 0 10px; } .wiki-content ol { list-style: decimal; padding-left: 26px; margin: 4px 0 10px; }
+.wiki-content img { display: inline-block; max-width: 100%; height: auto; }
+.wiki-content table { border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+.wiki-content td, .wiki-content th { padding: 3px 6px; border: 1px solid #c8ccd1; vertical-align: top; }
+.wiki-content .infobox, .wiki-content .thumb.tright, .wiki-content figure[typeof~='mw:File/Thumb'], .wiki-content .tright { float: right; clear: right; max-width: 280px; margin: 0 0 10px 14px; background: #f8f9fa; border: 1px solid #a2a9b1; }
+.wiki-content .thumb.tleft, .wiki-content .tleft { float: left; clear: left; max-width: 240px; margin: 0 14px 10px 0; }
+.wiki-content figure { display: table; padding: 3px; font-size: 11.5px; }
+.wiki-content figcaption { padding: 3px; }
+.wiki-content .hatnote { padding-left: 1.6em; margin-bottom: 8px; font-style: italic; color: #333; }
+.wiki-content .navbox, .wiki-content .mw-editsection, .wiki-content .noprint, .wiki-content .metadata.plainlinks, .wiki-content .mw-empty-elt, .wiki-content .sistersitebox { display: none; }
+.wiki-content .reflist, .wiki-content .references { font-size: 11.5px; }
+.wiki-content sup { font-size: 75%; line-height: 1; }
+.wiki-content .toc, .wiki-content #toc { display: inline-block; padding: 6px 10px; border: 1px solid #a2a9b1; background: #f8f9fa; font-size: 12px; }
+.wiki-content::after { content: ''; display: block; clear: both; }
+.wiki-license { clear: both; margin-top: 18px; padding-top: 8px; border-top: 1px solid #eaecf0; font: 11px sans-serif; color: #54595d; }
+
+/* ---------- Video pages: dark mid-2000s video site ---------- */
+.vid { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 16px; min-height: 100%; padding: 14px; background: #181818; color: #eee; font: 13px/1.4 Arial, Helvetica, sans-serif; }
+.vid a { color: #8fc7ff; cursor: pointer; }
+.vid-player { position: relative; aspect-ratio: 16 / 9; background: #000; border: 1px solid #333; }
+.vid-player.is-short { aspect-ratio: 9 / 16; max-height: 70vh; margin: 0 auto; }
+.vid-player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.vid-info h1 { margin-top: 10px; font: 700 17px/1.3 Arial, sans-serif; color: #fff; }
+.vid-meta { margin-top: 4px; color: #aaa; font-size: 12px; }
+.vid-credit { margin-top: 10px; padding: 8px 10px; border-left: 3px solid #e0402a; background: #232323; font-size: 12.5px; }
+.vid-empty { display: flex; align-items: center; gap: 8px; padding: 40px 10px; color: #aaa; }
+.vid-side h2 { margin-bottom: 8px; font: 700 13px Arial, sans-serif; color: #fff; }
+.vid-side ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.vid-card { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px; color: #eee !important; text-decoration: none; }
+.vid-card:hover span { color: #fff; text-decoration: underline; }
+.vid-card img { width: 110px; aspect-ratio: 16 / 9; object-fit: cover; background: #333; }
+.vid-card img.is-missing { visibility: hidden; }
+.vid-card span { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 12px; line-height: 1.3; }
+.vid-card small { display: block; margin-top: 2px; color: #999; font-size: 11px; }
+
+/* ---------- X posts & profiles ---------- */
+.xs { min-height: 100%; padding: 18px 12px 30px; background: #f2f4f5; color: #0f1419; font: 14px/1.45 'Segoe UI', Arial, sans-serif; }
+.xs a, .xs [data-href] { color: #1a73c9; cursor: pointer; }
+.xs-col { max-width: 560px; margin: 0 auto; display: grid; gap: 12px; }
+.xs-head { font-size: 13px; color: #536471; }
+.xs-post { display: block; width: 100%; max-width: 550px; border: 0; border-radius: 12px; background: #fff; }
+.xs-profile { display: flex; align-items: center; gap: 14px; padding: 16px; border: 1px solid #dfe3e6; border-radius: 12px; background: #fff; }
+.xs-avatar { display: grid; place-items: center; width: 64px; height: 64px; flex-shrink: 0; border-radius: 50%; background: linear-gradient(135deg, #1d9bf0, #7856ff); color: #fff; font: 700 28px Arial, sans-serif; }
+.xs-profile h1 { font: 800 20px/1.2 'Segoe UI', Arial, sans-serif; }
+.xs-handle { color: #536471; }
+.xs-note { padding: 12px 14px; border-left: 3px solid #e0402a; border-radius: 6px; background: #fff; font-size: 13px; }
+.xs-sub { margin-top: 6px; font: 700 15px 'Segoe UI', Arial, sans-serif; }
+.xs-info { display: flex; gap: 6px; align-items: flex-start; font-size: 12.5px; color: #536471; }
+.xs-info svg, .xs-links svg { flex-shrink: 0; margin-top: 3px; }
+.xs-links a { display: inline-flex; gap: 5px; align-items: center; font-size: 13px; }
+.xs-list { list-style: disc; padding-left: 20px; font-size: 13px; }
+
+/* ---------- Instagram, TikTok, Twitch, Spotify embeds ---------- */
+.emb { min-height: 100%; padding: 14px 12px 24px; background: #1c1c1f; color: #ddd; font: 13px Arial, sans-serif; }
+.emb.is-instagram, .emb.is-tiktok { background: #f5f5f5; color: #333; }
+.emb-head { max-width: 900px; margin: 0 auto 10px; font-weight: 700; letter-spacing: .02em; }
+.emb-box { margin: 0 auto; }
+.emb-box iframe { display: block; width: 100%; height: 100%; border: 0; border-radius: 8px; background: #000; }
+.emb.is-instagram .emb-box iframe, .emb.is-tiktok .emb-box iframe, .emb.is-spotify .emb-box iframe { background: transparent; }
+.emb-box.is-tall { width: min(100%, 420px); height: 740px; }
+.emb-box.is-wide { width: min(100%, 900px); aspect-ratio: 16 / 9; }
+.emb-box.is-short { width: min(100%, 640px); height: 152px; }
+.emb-box.is-panel { width: min(100%, 640px); height: 460px; }
+
+/* ---------- Any other site, in a frame ---------- */
+.frame-site { display: flex; flex-direction: column; height: 100%; }
+.frame-bar { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: #ffffe1; border-bottom: 1px solid #aca899; font: 11px Tahoma, 'Segoe UI', sans-serif; color: #000; }
+.frame-bar svg { color: #1f5fd6; flex-shrink: 0; }
+.frame-site iframe { flex: 1; width: 100%; border: 0; background: #fff; }
+
+@container (max-width: 640px) {
+  .gh-profile { grid-template-columns: 1fr; }
+  .vid { grid-template-columns: 1fr; }
+  .wiki-content .infobox, .wiki-content .tright { float: none; max-width: 100%; margin: 8px 0; }
+}

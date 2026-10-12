@@ -1,0 +1,21 @@
+/* Screen Tuner (developer panel, ?tune). Plain and legible on top of the 3D scene. */
+.tuner, .tuner-tab { position: fixed; top: 12px; right: 12px; z-index: 2147483000; font: 12px/1.4 Tahoma, 'Segoe UI', sans-serif; color: #111; }
+.tuner { width: 330px; padding: 10px 12px 12px; border: 1px solid #0842c9; border-radius: 6px; background: #ece9d8f2; box-shadow: 0 8px 30px #0008; }
+.tuner header { display: flex; justify-content: space-between; align-items: center; margin: -10px -12px 8px; padding: 5px 8px 5px 12px; border-radius: 5px 5px 0 0; color: #fff; background: linear-gradient(180deg, #3d95ff, #0453e0); }
+.tuner header button { width: 22px; height: 20px; border: 1px solid #fff; border-radius: 3px; color: #fff; background: #1a5ee9; font-weight: 700; }
+.tuner-tab { padding: 6px 10px; border: 1px solid #0842c9; border-radius: 4px; color: #fff; background: #0453e0; box-shadow: 0 4px 14px #0007; }
+.tuner-help { margin: 0 0 8px; color: #444; font-size: 11px; }
+.tuner-row { display: grid; grid-template-columns: 92px 1fr 64px 20px; align-items: center; gap: 6px; margin: 4px 0; }
+.tuner-row input[type='range'] { width: 100%; accent-color: #0453e0; }
+.tuner-row output { font: 11px Consolas, 'Courier New', monospace; text-align: right; }
+.tuner-reset-one { width: 20px; height: 20px; padding: 0; border: 1px solid #aca899; border-radius: 3px; background: #fff; color: #333; }
+.tuner-flags { display: flex; gap: 14px; margin: 8px 0; }
+.tuner-flags label { display: flex; align-items: center; gap: 4px; }
+.tuner-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.tuner-actions button { padding: 4px 10px; border: 1px solid #7f9db9; border-radius: 3px; background: linear-gradient(#fff, #e3e3db); }
+.tuner-actions .is-primary { border-color: #0842c9; color: #fff; background: linear-gradient(#3d95ff, #0453e0); }
+.tuner-code { margin: 8px 0 0; padding: 6px 8px; border: 1px solid #aca899; background: #fff; font: 10.5px/1.45 Consolas, 'Courier New', monospace; white-space: pre-wrap; word-break: break-all; user-select: all; }
+
+/* "Highlight screen": paint the screen area hot pink so its edges are easy to see against the bezel. */
+.tune-highlight .os-desktop { outline: 6px solid #ff00ff; outline-offset: -6px; }
+.tune-highlight .os-standby { background: #ff00ff !important; }
