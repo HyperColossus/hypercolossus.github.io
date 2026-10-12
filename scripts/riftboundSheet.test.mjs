@@ -65,7 +65,7 @@ test('sheet Binder groups owned alternate printings before pagination and keeps 
 test('private-sheet authentication signs a read-only JWT, coalesces reads and refreshes edits',async()=>{
   const {privateKey,publicKey}=generateKeyPairSync('rsa',{modulusLength:2048});
   const secret=JSON.stringify({type:'service_account',client_email:'reader@example.test',private_key:privateKey.export({type:'pkcs8',format:'pem'})});
-  let now=Date.parse('2026-10-12T00:00:00Z'),auth=0,reads=0,broken=false;
+  let now=Date.parse('2026-10-12T00:00:00Z'),auth=0,reads=0,journal=0,broken=false;
   const reader=createSheetReader({clock:()=>now,fetcher:async(url,options)=>{
     if(String(url)==='https://oauth2.googleapis.com/token'){
       auth++;const jwt=options.body.get('assertion').split('.');const payload=JSON.parse(Buffer.from(jwt[1],'base64url'));
@@ -73,13 +73,14 @@ test('private-sheet authentication signs a read-only JWT, coalesces reads and re
       assert.equal(payload.iss,'reader@example.test');assert.ok(verify('RSA-SHA256',Buffer.from(jwt.slice(0,2).join('.')),publicKey,Buffer.from(jwt[2],'base64url')));
       return Response.json({access_token:'fake-token',expires_in:3600});
     }
+    if(/^(Decks|Events)!/.test(url.searchParams.get('ranges'))){journal++;return new Response('missing tab',{status:400});}
     reads++;assert.equal(options.headers.Authorization,'Bearer fake-token');assert.equal(url.searchParams.getAll('ranges').length,13);
     if(broken)return new Response('private upstream detail',{status:403});
     const doc=document();if(reads>1)doc.sheets.at(-1).data[0].rowData[4].values[6]=cells([10]).values[0];
     return Response.json(doc);
   }});
   const env={RIFTBOUND_SHEET_ID:'a'.repeat(30),GOOGLE_SERVICE_ACCOUNT_JSON:secret};
-  const initial=await Promise.all([reader(env),reader(env)]);assert.equal(reads,1);assert.equal(auth,1);assert.equal(initial[0],initial[1]);
+  const initial=await Promise.all([reader(env),reader(env)]);assert.equal(reads,1);assert.equal(auth,1);assert.equal(initial[0],initial[1]);assert.equal(journal,2);assert.equal(initial[0].journal.Decks,null);
   await reader(env);assert.equal(reads,1);
   now+=61000;const changed=await reader(env);assert.equal(changed.cards[0].normal_owned,10);assert.equal(auth,1);
   now+=61000;broken=true;await assert.rejects(reader(env));assert.equal(reads,3);

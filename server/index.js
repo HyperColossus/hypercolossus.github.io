@@ -2,6 +2,7 @@ import { checkDatabase, withDatabase } from './database.js';
 import { scheduledPriceSync } from './riftbound/scheduled.js';
 import { readInventorySheet, sheetResponse } from './riftbound/sheet.js';
 import { validateCatalog, applyCatalog, sheetSetTools } from './riftbound/catalog.js';
+import { parseDecks, parseEvents, DECKS_TAB, EVENTS_TAB } from './riftbound/journal.js';
 import catalogSnapshot from './riftbound/catalog-snapshot.json' with { type: 'json' };
 import { InputError, readFilters, readCards, readFacets, readHistory, readCollectionSummary, readOwnership, readSetTools, readValuationDate } from './riftbound/queries.js';
 
@@ -31,7 +32,7 @@ export function createWorker({ databaseReady = checkDatabase, database = withDat
       const route = pathname.slice('/api/riftbound/'.length);
       const history = /^\/api\/riftbound\/cards\/([^/]+)\/history$/.exec(pathname);
 
-      if (!pathname.startsWith('/api/riftbound/') || (!['health', 'catalog', 'binder', 'facets', 'summary', 'ownership', 'set-tools', 'valuation'].includes(route) && !history)) {
+      if (!pathname.startsWith('/api/riftbound/') || (!['health', 'catalog', 'binder', 'facets', 'summary', 'ownership', 'set-tools', 'valuation', 'decks', 'events'].includes(route) && !history)) {
         return json({ error: 'Not found' }, 404);
       }
       if (request.method !== 'GET' && request.method !== 'HEAD') {
@@ -42,6 +43,7 @@ export function createWorker({ databaseReady = checkDatabase, database = withDat
         try {
           if (route === 'summary' && url.search) throw new InputError('Collection overview does not accept filters');
           if (route === 'ownership' && url.search) throw new InputError('Ownership does not accept filters');
+          if ((route === 'decks' || route === 'events') && url.search) throw new InputError('This view does not accept filters');
           if (route === 'set-tools' && [...url.searchParams.keys()].some(key => key !== 'set')) throw new InputError('Set tools only accept a set');
           const valuationDate=route==='valuation' ? readValuationDate(url.searchParams) : null;
           const filters = readFilters(route==='valuation' ? new URLSearchParams() : url.searchParams);
@@ -49,7 +51,9 @@ export function createWorker({ databaseReady = checkDatabase, database = withDat
           let data;
           if (env.RIFTBOUND_SHEET_ENABLED === 'true') {
             const snapshot = withCatalog(await sheetReader(env));
-            if (route === 'set-tools') {
+            if (route === 'decks') data = { decks: parseDecks(snapshot.journal?.[DECKS_TAB], snapshot.cards), source: 'google-sheet', refreshed_at: snapshot.refreshedAt };
+            else if (route === 'events') data = { events: parseEvents(snapshot.journal?.[EVENTS_TAB]), source: 'google-sheet', refreshed_at: snapshot.refreshedAt };
+            else if (route === 'set-tools') {
               // Gameplay details and sealed products come from the bundled catalog;
               // the sheet is authoritative for current card prices. No database access.
               if (!filters.set) throw new InputError('Choose a set');
@@ -57,6 +61,8 @@ export function createWorker({ databaseReady = checkDatabase, database = withDat
             } else {
               data = sheetResponse(snapshot,route,filters,history ? decodeURIComponent(history[1]) : null);
             }
+          } else if (route === 'decks' || route === 'events') {
+            data = { [route]: [], source: 'database' }; // Journal lives only in the sheet.
           } else data = await database(env, db => history
             ? readHistory(db, history[1], filters)
             : route === 'summary' ? readCollectionSummary(db)

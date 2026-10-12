@@ -7,8 +7,6 @@ import DeckRack from './riftbound/DeckRack';
 import Events from './riftbound/Events.jsx';
 import ROICalculator from './riftbound/ROICalculator.jsx';
 import PackSimulator from './riftbound/PackSimulator.jsx';
-import useLocalRecords from './riftbound/useLocalRecords';
-import { DRAFT_KEY, validateDrafts, adjustCard } from './riftbound/drafts';
 import { isBattlefield } from './riftbound/cardArtwork';
 
 const EMPTY_FILTERS = { q: '', set: '', rarity: '', finish: '', domain: '', energy: '', page: 1 };
@@ -16,27 +14,29 @@ const DOMAINS = [['Fury', '#d9564d'], ['Calm', '#5faa64'], ['Mind', '#639add'], 
 
 export default function RiftboundCompanion() {
   const [tab, setTab] = useState('catalog');
-  const drafts = useLocalRecords(DRAFT_KEY, validateDrafts);
-  const [activeId, setActiveId] = useState(null);
   return <section className="riftbound-app" data-app="riftbound" aria-label="Riftbound Companion">
     <header className="rb-heading">
       <span className="rb-mark" aria-hidden="true">✧</span>
-      <div className="rb-title-lockup"><p>THE SUMMONER’S ARCHIVE</p><h1>Riftbound</h1><span>Your collection, across the Rift</span></div>
+      <div className="rb-title-lockup"><p>THE SUMMONER’S ARCHIVE</p><h1>Riftbound</h1><span>Zack’s collection, across the Rift</span></div>
       <div className="rb-header-seal" aria-hidden="true"><span>✦</span><small>COLLECTOR<br />EDITION</small></div>
     </header>
     <nav className="rb-tabs" aria-label="Riftbound views">
-      <button aria-pressed={tab === 'catalog'} onClick={() => setTab('catalog')}><i aria-hidden="true">✧</i> Collection <span>Your card collection</span></button>
-      <button aria-pressed={tab === 'binder'} onClick={() => setTab('binder')}><i aria-hidden="true">▤</i> Binder <span>The owner’s collection</span></button>
-      <button aria-pressed={tab === 'events'} onClick={() => setTab('events')}><i aria-hidden="true">⚑</i> Events <span>Your event journal</span></button>
+      <button aria-pressed={tab === 'catalog'} onClick={() => setTab('catalog')}><i aria-hidden="true">✧</i> Collection <span>Zack’s cards</span></button>
+      <button aria-pressed={tab === 'binder'} onClick={() => setTab('binder')}><i aria-hidden="true">▤</i> Binder <span>Owned versions</span></button>
+      <button aria-pressed={tab === 'events'} onClick={() => setTab('events')}><i aria-hidden="true">⚑</i> Events <span>Events attended</span></button>
       <button aria-pressed={tab === 'calculator'} onClick={() => setTab('calculator')}><i aria-hidden="true">◷</i> Calculator <span>ROI Analysis</span></button>
       <button aria-pressed={tab === 'simulator'} onClick={() => setTab('simulator')}><i aria-hidden="true">⚄</i> Simulator <span>Rip Packs</span></button>
     </nav>
-    {tab === 'events' ? <Events /> : tab === 'calculator' ? <ROICalculator /> : tab === 'simulator' ? <PackSimulator /> : <CardBrowser key={tab} kind={tab} drafts={drafts} activeId={activeId} setActiveId={setActiveId} />}
+    {tab === 'events' ? <EventsTab /> : tab === 'calculator' ? <ROICalculator /> : tab === 'simulator' ? <PackSimulator /> : <CardBrowser key={tab} kind={tab} />}
     <footer className="rb-footer">Card data: RiftHunt / DotGG · Prices: TCGPlayer via TCG API / TCGCSV · Unofficial fan project. Not affiliated with Riot Games. <a href="/riftbound">Open full-page tracker</a></footer>
   </section>;
 }
 
-function CardBrowser({ kind, drafts, activeId, setActiveId }) {
+function EventsTab() {
+  return <Events resource={useResource('events', 0)} />;
+}
+
+function CardBrowser({ kind }) {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [showUnowned, setShowUnowned] = useState(false);
   const [search, setSearch] = useState('');
@@ -50,19 +50,15 @@ function CardBrowser({ kind, drafts, activeId, setActiveId }) {
   const resource = useResource(path, retry);
   const facets = useResource('facets', retry);
   const summary = useResource('summary', retry);
-  const ownership = useResource('ownership', retry);
   const data = resource.data;
-  const activeDeck = drafts.records.find(deck => deck.id === activeId);
-  const [notice, setNotice] = useState('');
+  const decks = useResource('decks', retry);
   const title = kind === 'binder' ? 'Binder' : 'Collection';
   const spreadKey = JSON.stringify({ ...filters, page: undefined, showUnowned });
   const pages = data?.items.length ? [0, 1].map(side => <React.Fragment key={side}>
     <div className="rb-pocket-grid" role="group" aria-label={`${side === 0 ? 'Left' : 'Right'} page, four card pockets`}>
       {Array.from({ length: 4 }, (_, pocket) => {
         const card = data.items[side * 4 + pocket];
-        return card ? <Card key={`${card.id}:${card.is_foil}`} card={card} binder={kind === 'binder'} canAdd={!!activeDeck} onAdd={() => {
-          if (drafts.save(drafts.records.map(deck => deck.id === activeId ? adjustCard(deck, card, 1) : deck))) setNotice(`${card.name} added to ${activeDeck.name}.`);
-        }} onSelect={() => setSelected(card)} /> : <div key={`empty-${pocket}`} className="rb-card-slot" aria-hidden="true"><span /></div>;
+        return card ? <Card key={`${card.id}:${card.is_foil}`} card={card} binder={kind === 'binder'} onSelect={() => setSelected(card)} /> : <div key={`empty-${pocket}`} className="rb-card-slot" aria-hidden="true"><span /></div>;
       })}
     </div>
     <p className="rb-sheet-number">{(filters.page - 1) * 2 + side + 1}</p>
@@ -104,17 +100,12 @@ function CardBrowser({ kind, drafts, activeId, setActiveId }) {
         {facets.error && !resource.error && <p className="rb-filter-warning" role="status">Set and rarity filters could not load. <button onClick={() => setRetry(value => value + 1)}>Retry</button></p>}
         </div>
       </div>
-      <DeckRack decks={drafts.records} activeId={activeId} setActiveId={setActiveId} save={drafts.save} error={drafts.error} ownership={ownership} unavailable={drafts.unavailable} />
+      <DeckRack resource={decks} />
     </div>
     <details className="rb-collection-extras"><summary>Collection overview & value</summary><CollectionOverview resource={summary} retry={retry} onRefresh={() => setRetry(value => value + 1)} />
     {facets.data && <details className="rb-set-progress"><summary>Set completion</summary><p>Each catalog printing counts once, regardless of finish or copy count.</p><ul>{facets.data.sets.map(set => <li key={set.id}><span>{set.name}: {set.owned_cards} / {set.cards}</span><progress aria-label={`${set.name} owned printings`} value={set.owned_cards} max={set.cards || 1} /></li>)}</ul></details>}
     </details>
-    <p className="rb-action-notice" role="status">{notice}</p>
-    {selected && <CardInspector key={`${selected.id}:${selected.is_foil}`} card={selected} onClose={() => setSelected(null)} activeDeck={activeDeck} onAdd={card => {
-      if (!activeDeck || !drafts.save(drafts.records.map(deck => deck.id === activeId ? adjustCard(deck, card, 1) : deck))) return false;
-      setNotice(`${card.name} added to ${activeDeck.name}.`);
-      return true;
-    }} />}
+    {selected && <CardInspector key={`${selected.id}:${selected.is_foil}`} card={selected} onClose={() => setSelected(null)} />}
   </div>;
 }
 
@@ -124,8 +115,8 @@ function CollectionOverview({ resource, retry, onRefresh }) {
   const data = resource.data;
   const count = value => Number(value).toLocaleString('en-US');
   return <section className="rb-overview" aria-label="Whole collection overview">
-    <header><h2>Your Collection</h2><button disabled={resource.loading} onClick={onRefresh}>Refresh collection</button></header>
-    {resource.loading ? <p role="status">Counting your collection…</p>
+    <header><h2>Collection overview</h2><button disabled={resource.loading} onClick={onRefresh}>Refresh collection</button></header>
+    {resource.loading ? <p role="status">Counting the collection…</p>
       : resource.error ? <p role="alert">Collection overview is unavailable. Refresh to try again.</p>
         : data && <>
           <dl>
@@ -134,8 +125,8 @@ function CollectionOverview({ resource, retry, onRefresh }) {
             <div><dt>{Number(data.unpriced_copies) ? 'Partial recorded value' : 'Recorded value'}</dt><dd>{money(data.value_usd)}</dd><small>{count(data.priced_copies)} copies priced · {count(data.unpriced_copies)} missing prices</small></div>
           </dl>
           <p>Whole collection · USD · {data.oldest_price_date ? `${priceAge(data.oldest_price_date)}${data.newest_price_date !== data.oldest_price_date ? ` through ${data.newest_price_date}` : ''}.` : 'No owned copies have recorded prices.'} Values use the latest observation for each card.</p>
-          {data.source === 'google-sheet' && <p>Connected to your inventory sheet · Checks for edits every minute. Last checked {new Date(data.refreshed_at).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}.</p>}
-          {!Number(data.copies) && <p>{data.source === 'google-sheet' ? 'Add your quantities to the inventory sheet; they will appear here automatically.' : 'Add your quantities to the spreadsheet and import it locally, then refresh here.'}</p>}
+          {data.source === 'google-sheet' && <p>Live from the inventory sheet · Checks for edits every minute. Last checked {new Date(data.refreshed_at).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}.</p>}
+          {!Number(data.copies) && <p>{data.source === 'google-sheet' ? 'No cards recorded yet.' : 'Add your quantities to the spreadsheet and import it locally, then refresh here.'}</p>}
           {data.source !== 'google-sheet' && <details className="rb-past-value"><summary>Value today’s collection at past prices</summary><p>This uses your current holdings and the newest observation on or before the selected UTC date. It does not reconstruct what you owned then.</p><form onSubmit={event => {event.preventDefault();setDate(new FormData(event.currentTarget).get('date'));}}><label>Valuation date<input name="date" required type="date" max={new Date().toISOString().slice(0,10)} /></label><button>Calculate past value</button></form>
             {past.loading ? <p role="status">Looking up past prices…</p> : past.error ? <p role="alert">Past valuation unavailable. Refresh to retry.</p> : past.data && <p role="status">{date}: {Number(past.data.unpriced_copies) ? 'partial value' : 'recorded value'} {money(past.data.value_usd)} · {count(past.data.priced_copies)} copies priced · {count(past.data.unpriced_copies)} missing prices. {priceAge(past.data.oldest_price_date)}{past.data.newest_price_date!==past.data.oldest_price_date ? ` through ${past.data.newest_price_date}` : ''}.</p>}
           </details>}
@@ -162,11 +153,11 @@ function useResource(path, retry) {
   return !path ? {data:null,error:null,loading:false} : state.key === key ? { ...state, loading: false } : { data: null, error: null, loading: true };
 }
 
-function Card({ card, binder, onSelect, canAdd, onAdd }) {
+function Card({ card, binder, onSelect }) {
   const [broken, setBroken] = useState(false);
   return <article className={`rb-card${!binder && !card.quantity ? ' rb-card-unowned' : ''}`}>
     <button className="rb-card-open" aria-label={`Card details & prices for ${card.name}`} onClick={onSelect} onContextMenu={event => { event.preventDefault(); onSelect(); }}><span className="rb-art">{card.image_url && !broken ? <img src={card.image_url} alt={card.name} loading="eager" referrerPolicy="no-referrer" onError={() => setBroken(true)} /> : <span className="rb-art-missing"><span aria-hidden="true">✦</span>{card.name}<small>Artwork unavailable</small></span>}</span></button>
-    <div className="rb-card-caption"><span>{card.quantity > 0 ? `${card.quantity} × owned` : 'Not owned'}</span><button className="rb-quick-add" disabled={!canAdd} aria-label={`Add ${card.name} to deck`} title={canAdd ? 'Add to selected draft' : 'Create or select a deck first'} onClick={onAdd}>+</button></div>
+    <div className="rb-card-caption"><span>{card.quantity > 0 ? `${card.quantity} × owned` : 'Not owned'}</span></div>
     <div className="rb-card-body rb-sr-only"><p className="rb-meta">{card.set_name} · {card.rarity}</p><h3>{card.name}</h3>
       <dl className="rb-prices">{(!binder || card.normal_quantity > 0) && <div><dt>Normal</dt><dd>{money(card.normal_price)}</dd></div>}{(!binder || card.foil_quantity > 0) && <div><dt>Foil</dt><dd>{money(card.foil_price)}</dd></div>}</dl>
       <p className="rb-gameplay">{card.domains?.join(' · ') || 'Domain unknown'} · {card.energy == null ? 'Energy —' : `Energy ${card.energy}`}</p>
@@ -175,14 +166,13 @@ function Card({ card, binder, onSelect, canAdd, onAdd }) {
   </article>;
 }
 
-function CardInspector({ card, onClose, activeDeck, onAdd }) {
+function CardInspector({ card, onClose }) {
   const panel = useRef(null);
   const [printing, setPrinting] = useState(card);
   const [broken, setBroken] = useState(false);
   const [imageShape, setImageShape] = useState(null);
   const landscape = isBattlefield(printing);
   const rotateImage = landscape && imageShape?.url === printing.image_url && imageShape.width < imageShape.height;
-  const [added, setAdded] = useState(false);
   const variants = useResource(`binder?${new URLSearchParams({set:card.set_id,q:card.name,limit:60})}`, 0);
   const ownedVersions = variants.data?.items.filter(c => c.name === card.name) ?? [];
   const finishes = ownedVersions.filter(c => c.id === printing.id && c.quantity > 0);
@@ -197,7 +187,7 @@ function CardInspector({ card, onClose, activeDeck, onAdd }) {
     panel.current?.showModal();
     return () => { document.body.style.overflow = previousOverflow; if (trigger?.isConnected) trigger.focus(); };
   }, []);
-  const selectVersion = version => { setPrinting(version); setBroken(false); setAdded(false); };
+  const selectVersion = version => { setPrinting(version); setBroken(false); };
   return <dialog ref={panel} className={`rb-inspector${landscape ? ' rb-inspector-wide' : ''}`} aria-labelledby="rb-inspector-title" onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => {
     if (event.target !== event.currentTarget) return;
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -219,9 +209,7 @@ function CardInspector({ card, onClose, activeDeck, onAdd }) {
         {owned > 0 && <><table className="rb-finish-information"><caption>{owned} copies owned · Prices per copy</caption><thead><tr><th>Finish</th><th>Owned</th><th>Market price</th></tr></thead><tbody>{finishes.map(finish => <tr key={String(finish.is_foil)}><th scope="row">{finish.is_foil ? 'Foil' : 'Normal'}</th><td>{finish.quantity}</td><td>{money(finish.is_foil ? finish.foil_price : finish.normal_price)}</td></tr>)}</tbody></table>
         <p className="rb-inspector-date">{priceAge(printing.price_date)}</p></>}
         {variants.error && <p role="status">Other owned versions could not be loaded.</p>}
-        {printings.length > 1 && <div className="rb-inspector-versions"><h3>Your artwork versions</h3><div>{printings.map(version => <button key={version.id} aria-pressed={version.id===printing.id} onClick={() => selectVersion(version)}>#{version.collector_number || 'Unknown'} · {version.rarity}<small>{ownedVersions.filter(item => item.id === version.id).reduce((total, item) => total + Number(item.quantity), 0)} owned</small></button>)}</div></div>}
-        <button className="rb-inspector-add" disabled={!activeDeck} onClick={() => setAdded(onAdd(printing))}>{activeDeck ? `Add to ${activeDeck.name}` : 'Select a deck to add this card'}</button>
-        {added && <p role="status">Added to your deck.</p>}
+        {printings.length > 1 && <div className="rb-inspector-versions"><h3>Owned artwork versions</h3><div>{printings.map(version => <button key={version.id} aria-pressed={version.id===printing.id} onClick={() => selectVersion(version)}>#{version.collector_number || 'Unknown'} · {version.rarity}<small>{ownedVersions.filter(item => item.id === version.id).reduce((total, item) => total + Number(item.quantity), 0)} owned</small></button>)}</div></div>}
         {owned > 0 && <details className="rb-inspector-history"><summary>Price history</summary><History key={printing.id} card={printing} hasNormal={hasNormal} hasFoil={hasFoil} /></details>}
       </section>
     </div>

@@ -1,31 +1,23 @@
-import React, { useState } from 'react';
-import useLocalRecords from './useLocalRecords';
-import { validateEvents } from './events.js';
-import LocalBackup from './LocalBackup';
+import React from 'react';
 
-export default function Events() {
-  const { records, save, error, unavailable } = useLocalRecords('riftbound-events-v1', validateEvents);
-  const [editing, setEditing] = useState(null);
+// Events Zack has attended, read from the sheet's Events tab. View-only.
+export default function Events({ resource }) {
+  const events = resource.data?.events ?? [];
+  const formatDate = date => date ? new Date(`${date}T12:00:00Z`).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }) : 'Date not set';
   return <main className="rb-events rb-book">
-    <div className="rb-book-title"><h2>Your Event Journal</h2></div>
-    <p>Plan game nights and tournaments. Saved in this browser; these are your own entries, not an official event feed. Times use your local timezone.</p>
-    {error && <p role="alert">{error}</p>}
-    <LocalBackup kind="events" records={records} save={save} unavailable={unavailable} />
-    <form key={editing?.id ?? 'new'} onSubmit={event => {
-      event.preventDefault();
-      const form = event.currentTarget;
-      const fields = new FormData(form);
-      const item = { id: editing?.id ?? crypto.randomUUID(), name: fields.get('name').trim(), location: fields.get('location').trim(), date: fields.get('date') };
-      if (!item.name) return;
-      if (save(editing ? records.map(record => record.id === editing.id ? item : record) : [...records, item])) { setEditing(null); form.reset(); }
-    }}>
-      <label>Event name<input name="name" required maxLength={100} defaultValue={editing?.name ?? ''} /></label>
-      <label>When<input name="date" type="datetime-local" required defaultValue={editing?.date ?? ''} /></label>
-      <label>Location<input name="location" maxLength={200} defaultValue={editing?.location ?? ''} placeholder="Store, venue, or online" /></label>
-      <button disabled={!editing && records.length >= 200}>{editing ? 'Save changes' : 'Add event'}</button>
-      {editing && <button type="button" onClick={() => setEditing(null)}>Cancel edit</button>}
-    </form>
-    {!records.length && <div className="rb-state"><h3>Your next adventure starts here</h3><p>Add a game night or tournament to your journal.</p></div>}
-    <ul>{[...records].sort((a, b) => a.date.localeCompare(b.date)).map(event => <li key={event.id}><div><h3>{event.name}</h3><time dateTime={event.date}>{new Date(event.date).toLocaleString()}</time><p>{event.location || 'Location not set'}</p></div><button onClick={() => setEditing(event)}>Edit</button><button onClick={() => { if (save(records.filter(record => record.id !== event.id)) && editing?.id === event.id) setEditing(null); }}>Remove</button></li>)}</ul>
+    <div className="rb-book-title"><h2>Zack’s Event History</h2></div>
+    {resource.loading ? <p role="status">Loading events…</p>
+      : resource.error ? <p role="alert">Event history is unavailable right now.</p>
+        : !events.length ? <div className="rb-state"><h3>No events recorded yet</h3></div>
+          : <>
+            <p>{events.length} {events.length === 1 ? 'event' : 'events'} attended.</p>
+            <ul>{events.map((event, index) => <li key={`${event.date}-${event.name}-${index}`}><div>
+              <h3>{event.name}</h3>
+              <time dateTime={event.date ?? undefined}>{formatDate(event.date)}</time>
+              <p>{[event.location, event.format].filter(Boolean).join(' · ') || 'Location not recorded'}</p>
+              {(event.deck || event.result) && <p><b>{event.result || 'Result not recorded'}</b>{event.deck && ` with ${event.deck}`}</p>}
+              {event.notes && <p className="rb-event-notes">{event.notes}</p>}
+            </div></li>)}</ul>
+          </>}
   </main>;
 }

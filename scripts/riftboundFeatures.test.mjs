@@ -2,9 +2,6 @@ import {test,before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {PGlite} from '@electric-sql/pglite';
-import {backupText,previewRestore} from '../src/apps/riftbound/backups.js';
-import {deckCoverage} from '../src/apps/riftbound/drafts.js';
-import {validateEvents} from '../src/apps/riftbound/events.js';
 import {createWorker} from '../server/index.js';
 import {readSetTools,readFacets,readCollectionSummary} from '../server/riftbound/queries.js';
 const db=new PGlite();
@@ -19,20 +16,6 @@ before(async()=>{
     INSERT INTO riftbound.sealed_products (id,set_id,name,kind,pack_count,msrp) VALUES ('box','OGN','Box','box',24,120);`);
 });
 after(()=>db.close());
-test('backup previews merge without mutation, reject conflicts and strip unrelated fields',()=>{
-  const deck={id:'d',name:'Draft',cards:[{id:'a',name:'Alpha',quantity:3}],irrelevant:'not exported'};
-  const text=backupText('decks',[deck]);assert.doesNotMatch(text,/irrelevant/);
-  const preview=previewRestore('decks',text,[]);assert.equal(preview.added,1);
-  assert.equal(previewRestore('decks',text,preview.records).skipped,1);
-  assert.throws(()=>previewRestore('decks',text,[{...deck,name:'Renamed'}]),/conflicts/);
-  assert.throws(()=>previewRestore('events',text,[]));
-  assert.throws(()=>previewRestore('decks','{}',[]));
-  assert.throws(()=>previewRestore('decks',backupText('decks',[deck]),[{...deck,cards:[]}]),/conflicts/);
-  const event={id:'e',name:'Event',location:'Here',date:'2026-10-06T18:00'};
-  assert.equal(previewRestore('events',backupText('events',[event]),[]).added,1);
-  assert.throws(()=>validateEvents([{...event,date:'2026-02-30T18:00'}]));
-  const coverage=deckCoverage(deck,[{id:'a',quantity:'2'}]);assert.equal(coverage.missing,1);assert.equal(deck.cards[0].quantity,3);
-});
 test('set tools are complete and isolated, and completion counts printings once across finishes',async()=>{
   const tools=await readSetTools(db,'OGN');assert.equal(tools.cards.length,1);assert.equal(tools.cards[0].rules_text,'Plain text <script>');
   assert.equal(tools.sealed[0].msrp,'120.0000');assert.equal(tools.sealed[0].market_price,null);

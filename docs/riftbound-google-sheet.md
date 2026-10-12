@@ -80,3 +80,13 @@ Run `scripts\install-catalog-watch.cmd` once. It registers the Windows scheduled
 Sheet rows from other providers (such as `dotgg:RAD-001`) match RiftHunt cards by TCGPlayer ID, then by card name. Name matches copy type and rules text only. Showcase or non-numeric collector numbers are marked alternate, so they stay out of the booster model.
 
 The watch updates the repository, not the live site. Rebuild and deploy to publish. Remove it with `schtasks /Delete /TN "HyperColossus Riftbound catalog watch" /F`.
+
+## Decks and events (October 12, 2026)
+
+Decks and events are Zack's own: decks he plays and events he has attended. Visitors only view them, and the browser-local drafts, event journal and JSON backups were removed. Both come from optional tabs in the inventory sheet, read with the same credential and one-minute cache. A missing tab shows as "No decks/events recorded yet".
+
+**Decks** tab, header row `Deck | Card | Quantity | Section`, one row per card. Card is a card name (matched to the base printing) or an exact Card ID. Quantity defaults to 1. Section is Legend, Champion, Main, Battlefield, Rune or Sideboard, defaulting to Main. Repeated rows merge. The site shows each deck's total, domains and how many copies are not in the collection.
+
+**Events** tab, header row `Date | Event | Location | Format | Deck | Result | Notes`. Date is a sheet date or YYYY-MM-DD. Events are listed newest first.
+
+API: `GET /api/riftbound/decks` and `GET /api/riftbound/events` (sheet mode; empty in database mode).

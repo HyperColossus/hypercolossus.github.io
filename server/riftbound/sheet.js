@@ -1,5 +1,6 @@
 import { InputError } from './queries.js';
 import { adjacentOwnedVersions, combineOwnedFinishes } from './binder.js';
+import { DECKS_TAB, EVENTS_TAB } from './journal.js';
 
 export const INVENTORY_TABS = ['ARC','OGN','OGS','RAD','JDG','OPP','PR','SGN','SFD','T1A','T1S','UNL','VEN'];
 const MAX_ROWS = 1000;
@@ -103,6 +104,17 @@ export function createSheetReader({ fetcher = fetch, clock = Date.now } = {}) {
       const response=await fetcher(url,{headers:{Authorization:`Bearer ${access}`},signal:AbortSignal.timeout(15000)});
       if(!response.ok){if(response.status===401)tokenCache=null;throw new Error('Inventory sheet unavailable');}
       const data=parseInventorySheet(await response.json(),new Date(clock()).toISOString());
+      // Optional journal tabs: a missing tab (HTTP 400) means none yet, not an outage.
+      data.journal={};
+      for(const tab of [DECKS_TAB,EVENTS_TAB]){
+        const extra=new URL(`https://sheets.googleapis.com/v4/spreadsheets/${id}`);
+        extra.searchParams.set('fields','sheets(properties(title),data(rowData(values(userEnteredValue,effectiveValue))))');
+        extra.searchParams.append('ranges',`${tab}!A1:H2000`);
+        const reply=await fetcher(extra,{headers:{Authorization:`Bearer ${access}`},signal:AbortSignal.timeout(15000)});
+        if(reply.status===400){data.journal[tab]=null;continue;}
+        if(!reply.ok)throw new Error('Inventory sheet unavailable');
+        data.journal[tab]=(await reply.json()).sheets?.[0]?.data?.[0]??null;
+      }
       dataCache={key,data,expires:clock()+TTL};
       return data;
     })();
