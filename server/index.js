@@ -1,6 +1,8 @@
 import { checkDatabase, withDatabase } from './database.js';
 import { scheduledPriceSync } from './riftbound/scheduled.js';
 import { readInventorySheet, sheetResponse } from './riftbound/sheet.js';
+import { validateCatalog, applyCatalog, sheetSetTools } from './riftbound/catalog.js';
+import catalogSnapshot from './riftbound/catalog-snapshot.json' with { type: 'json' };
 import { InputError, readFilters, readCards, readFacets, readHistory, readCollectionSummary, readOwnership, readSetTools, readValuationDate } from './riftbound/queries.js';
 
 function json(body, status = 200, headers = {}) {
@@ -10,7 +12,15 @@ function json(body, status = 200, headers = {}) {
   });
 }
 
-export function createWorker({ databaseReady = checkDatabase, database = withDatabase, sheetReader = readInventorySheet } = {}) {
+export function createWorker({ databaseReady = checkDatabase, database = withDatabase, sheetReader = readInventorySheet, catalog = catalogSnapshot } = {}) {
+  let checkedCatalog;
+  const enriched = new WeakMap();
+  // Merge bundled gameplay details into each sheet snapshot once.
+  const withCatalog = snapshot => {
+    checkedCatalog ??= validateCatalog(catalog);
+    if (!enriched.has(snapshot)) enriched.set(snapshot, { ...snapshot, cards: applyCatalog(snapshot.cards, checkedCatalog) });
+    return enriched.get(snapshot);
+  };
   return {
     async fetch(request, env) {
       const url = new URL(request.url);
@@ -38,18 +48,12 @@ export function createWorker({ databaseReady = checkDatabase, database = withDat
           if (route === 'catalog' && filters.finish) throw new InputError('Finish applies to the Binder only');
           let data;
           if (env.RIFTBOUND_SHEET_ENABLED === 'true') {
-            const snapshot = await sheetReader(env);
+            const snapshot = withCatalog(await sheetReader(env));
             if (route === 'set-tools') {
-              // Keep gameplay and sealed-product metadata from the existing catalog.
-              // The inventory sheet is authoritative for current card prices.
-              data = await database(env, db => readSetTools(db, filters.set));
-              const quotes = new Map(snapshot.cards.map(card => [card.id,card]));
-              data.cards = data.cards.map(card => {
-                const quote = quotes.get(card.id);
-                return {...card, normal_price:quote?.normal_price ?? null, foil_price:quote?.foil_price ?? null, price_date:quote?.price_date ?? null};
-              });
-              data.source = 'google-sheet';
-              data.refreshed_at = snapshot.refreshedAt;
+              // Gameplay details and sealed products come from the bundled catalog;
+              // the sheet is authoritative for current card prices. No database access.
+              if (!filters.set) throw new InputError('Choose a set');
+              data = sheetSetTools(snapshot, checkedCatalog, filters.set);
             } else {
               data = sheetResponse(snapshot,route,filters,history ? decodeURIComponent(history[1]) : null);
             }

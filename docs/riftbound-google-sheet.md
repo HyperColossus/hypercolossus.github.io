@@ -48,8 +48,25 @@ To repeat the inventory API check after exporting fresh bounded cell data, run `
 - Rows are ordered by set and collector number, including overnumbered cards. Price dates come from the sheet, not the time the site reads it. The site shows when it last checked the sheet.
 - This connection syncs edits from the sheet; it does not fetch new market prices into the sheet or write back from the website.
 - Current-price details show the sheet's current observation. Past valuation is hidden in sheet mode because the sheet does not contain historical snapshots. Existing database history remains untouched.
-- Calculator/simulator gameplay and sealed-product metadata still require the existing database. In sheet mode, their card prices are overlaid from the inventory sheet. The sheet does not include enough gameplay data to replace that database.
+- Calculator, simulator and card details get card types, rules text, treatments and sealed products from the bundled catalog snapshot (`server/riftbound/catalog-snapshot.json`), with card prices from the sheet. Sheet mode needs no database. See **Catalog snapshot** below.
 - Requests fail with a sanitized unavailable message if Google access fails or the sheet is invalid. An old cache is not silently passed off as a live connection.
 - Each tab is limited to rows 2–1000 and columns A–M. A card in row 1000 fails validation rather than silently truncating the collection. Update the server's tab list and range if the inventory grows.
 
 To revert to the database, set `RIFTBOUND_SHEET_ENABLED` to `"false"` and redeploy. No database ownership or price records are changed by this connection.
+
+## Catalog snapshot
+
+Decided October 12, 2026: production uses the sheet for ownership and current prices, plus a gameplay catalog bundled with the Worker. No hosted database is required. Price history and past valuation stay local-only.
+
+Refresh the snapshot after importing a new set or editing sealed products, then rebuild and deploy:
+
+```powershell
+npm run db:up
+npm run catalog:snapshot
+```
+
+This reads the local Docker database (read-only) and writes `server/riftbound/catalog-snapshot.json`: card types, supertypes, rules text, alt/overnumbered/signature flags and sealed products with their last recorded market price and date. Without the database, `npm run catalog:snapshot -- --from-export <saved RiftHunt export>` builds card details only (no sealed products).
+
+The committed snapshot was built on October 12 from the saved RiftHunt export: 1,432 cards with details, 0 sealed products. The sheet's 213 DotGG-only printings have no type, so the simulator excludes them and the battlefield name list remains their landscape fallback. Rerun the command against the database to add sealed products. Retail/Market ROI needs either sealed records or costs entered in the calculator.
+
+The Worker validates the snapshot and fails with a sanitized 503 if it is malformed. Cards absent from the snapshot keep unknown details rather than guessed ones.

@@ -14,6 +14,7 @@
     "db:stop": "node scripts/riftbound-local.mjs stop",
     "db:check": "node scripts/riftbound-local.mjs check",
     "catalog:import": "node scripts/riftbound-import.mjs",
+    "catalog:snapshot": "node scripts/riftbound-catalog-snapshot.mjs",
     "ownership:import": "node scripts/riftbound-ownership-import.mjs",
     "catalog:check": "node scripts/riftcodex-check.mjs",
     "prices:sync": "node scripts/riftbound-prices.mjs",
