@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { getRiftbound, money, priceAge } from './riftbound/api';
 import './riftbound.css';
-import './riftbound/hearthstone-collection.css';
+import './riftbound/hs-collection.css';
 import PageTurn from './riftbound/PageTurn';
 import DeckRack from './riftbound/DeckRack';
 import Events from './riftbound/Events.jsx';
@@ -12,23 +12,43 @@ import { isBattlefield } from './riftbound/cardArtwork';
 const EMPTY_FILTERS = { q: '', set: '', rarity: '', finish: '', domain: '', energy: '', page: 1 };
 const DOMAINS = [['Fury', '#d9564d'], ['Calm', '#5faa64'], ['Mind', '#639add'], ['Body', '#e48b52'], ['Chaos', '#ad75c8'], ['Order', '#eac859'], ['Colorless', '#b6b9bc']];
 
+// Booster pack art (TCGPlayer product images) for each main set's tab.
+const PACK_ART = { OGN: 635366, SFD: 661954, UNL: 678149, VEN: 693377, RAD: 711362 };
+const packArt = set => PACK_ART[set.id] ? `https://tcgplayer-cdn.tcgplayer.com/product/${PACK_ART[set.id]}_in_1000x1000.jpg` : set.cover;
+const MODES = [['binder', '▤', 'Binder'], ['calculator', '◷', 'ROI calculator'], ['simulator', '⚄', 'Pack simulator'], ['events', '⚑', 'Events']];
+
 export default function RiftboundCompanion() {
   const [tab, setTab] = useState('catalog');
-  return <section className="riftbound-app" data-app="riftbound" aria-label="Riftbound Companion">
-    <header className="rb-heading">
-      <span className="rb-mark" aria-hidden="true">✧</span>
-      <div className="rb-title-lockup"><p>THE SUMMONER’S ARCHIVE</p><h1>Riftbound</h1><span>Zack’s collection, across the Rift</span></div>
-      <div className="rb-header-seal" aria-hidden="true"><span>✦</span><small>COLLECTOR<br />EDITION</small></div>
-    </header>
-    <nav className="rb-tabs" aria-label="Riftbound views">
-      <button aria-pressed={tab === 'catalog'} onClick={() => setTab('catalog')}><i aria-hidden="true">✧</i> Collection <span>Zack’s cards</span></button>
-      <button aria-pressed={tab === 'binder'} onClick={() => setTab('binder')}><i aria-hidden="true">▤</i> Binder <span>Owned versions</span></button>
-      <button aria-pressed={tab === 'events'} onClick={() => setTab('events')}><i aria-hidden="true">⚑</i> Events <span>Events attended</span></button>
-      <button aria-pressed={tab === 'calculator'} onClick={() => setTab('calculator')}><i aria-hidden="true">◷</i> Calculator <span>ROI Analysis</span></button>
-      <button aria-pressed={tab === 'simulator'} onClick={() => setTab('simulator')}><i aria-hidden="true">⚄</i> Simulator <span>Rip Packs</span></button>
-    </nav>
-    {tab === 'events' ? <EventsTab /> : tab === 'calculator' ? <ROICalculator /> : tab === 'simulator' ? <PackSimulator /> : <CardBrowser key={tab} kind={tab} />}
-    <footer className="rb-footer">Card data: RiftHunt / DotGG · Prices: TCGPlayer via TCG API / TCGCSV · Unofficial fan project. Not affiliated with Riot Games. <a href="/riftbound">Open full-page tracker</a></footer>
+  const [set, setSet] = useState('');
+  const facets = useResource('facets', 0);
+  const summary = useResource('summary', 0);
+  const decks = useResource('decks', 0);
+  const sets = facets.data?.sets.filter(item => item.cards > 0) ?? [];
+  const chooseSet = id => { setSet(id); if (tab !== 'catalog' && tab !== 'binder') setTab('catalog'); };
+  return <section className="riftbound-app hs" data-app="riftbound" aria-label="Zack’s Riftbound collection">
+    <div className="hs-stage">
+      <div className="hs-main">
+        <nav className="hs-tabs" aria-label="Sets and tools">
+          <div className="hs-set-tabs" role="group" aria-label="Sets">
+            <button className="hs-set-tab hs-set-all" aria-pressed={!set && (tab === 'catalog' || tab === 'binder')} title="All sets" onClick={() => chooseSet('')}><span aria-hidden="true">✦</span><span className="rb-sr-only">All sets</span></button>
+            {sets.map(item => <button key={item.id} className="hs-set-tab" aria-pressed={set === item.id && (tab === 'catalog' || tab === 'binder')} title={`${item.name} · ${item.owned_cards}/${item.cards}`} onClick={() => chooseSet(item.id)}>
+              {packArt(item) ? <img src={packArt(item)} alt="" referrerPolicy="no-referrer" loading="lazy" className={PACK_ART[item.id] ? 'hs-pack' : 'hs-card-crop'} /> : <b>{item.id}</b>}
+              <span className="rb-sr-only">{item.name}</span></button>)}
+          </div>
+          <div className="hs-mode-tabs" role="group" aria-label="Tools">
+            {MODES.map(([mode, icon, label]) => <button key={mode} className="hs-mode-tab" aria-pressed={tab === mode} title={label} onClick={() => setTab(current => current === mode && mode === 'binder' ? 'catalog' : mode)}><span aria-hidden="true">{icon}</span><span className="rb-sr-only">{label}</span></button>)}
+          </div>
+        </nav>
+        {tab === 'events' ? <EventsTab /> : tab === 'calculator' ? <ROICalculator /> : tab === 'simulator' ? <PackSimulator />
+          : <CardBrowser key={`${tab}:${set}`} kind={tab} set={set} setName={sets.find(item => item.id === set)?.name} facets={facets} summary={summary} />}
+      </div>
+      <DeckRack resource={decks} />
+    </div>
+    <footer className="hs-status">
+      <span className="hs-status-count" title="Owned copies">{summary.data ? <><b>{Number(summary.data.copies).toLocaleString()}</b> cards</> : '—'}</span>
+      <span className="hs-status-credit">Card data: RiftHunt / DotGG · Prices: TCGPlayer · Unofficial fan project, not affiliated with Riot Games.</span>
+      <span className="hs-status-value" title="Collection value at recorded prices">{summary.data?.value_usd ? money(summary.data.value_usd) : '—'}</span>
+    </footer>
   </section>;
 }
 
@@ -36,8 +56,8 @@ function EventsTab() {
   return <Events resource={useResource('events', 0)} />;
 }
 
-function CardBrowser({ kind }) {
-  const [filters, setFilters] = useState(EMPTY_FILTERS);
+function CardBrowser({ kind, set, setName, facets, summary }) {
+  const [filters, setFilters] = useState({ ...EMPTY_FILTERS, set });
   const [showUnowned, setShowUnowned] = useState(false);
   const [search, setSearch] = useState('');
   const [retry, setRetry] = useState(0);
@@ -46,64 +66,56 @@ function CardBrowser({ kind }) {
   const [turning, setTurning] = useState(false);
   const change = (key, value) => { setFilters(current => ({ ...current, [key]: value, page: 1 })); setSelected(null); };
   const params = new URLSearchParams({ ...filters, ...(kind === 'catalog' && !showUnowned ? { owned: 'true' } : {}), ...(kind === 'binder' ? { group: 'printing' } : {}), limit: 8 });
-  const path = `${kind}?${params}`;
-  const resource = useResource(path, retry);
-  const facets = useResource('facets', retry);
-  const summary = useResource('summary', retry);
+  const resource = useResource(`${kind}?${params}`, retry);
   const data = resource.data;
-  const decks = useResource('decks', retry);
   const title = kind === 'binder' ? 'Binder' : 'Collection';
   const spreadKey = JSON.stringify({ ...filters, page: undefined, showUnowned });
+  const filtered = filters.q || filters.rarity || filters.domain || filters.energy !== '';
+  const heading = filters.domain || setName || (kind === 'binder' ? 'Binder' : 'All Cards');
   const pages = data?.items.length ? [0, 1].map(side => <React.Fragment key={side}>
-    <div className="rb-pocket-grid" role="group" aria-label={`${side === 0 ? 'Left' : 'Right'} page, four card pockets`}>
+    <div className="rb-pocket-grid" role="group" aria-label={`${side === 0 ? 'Left' : 'Right'} page`}>
       {Array.from({ length: 4 }, (_, pocket) => {
         const card = data.items[side * 4 + pocket];
         return card ? <Card key={`${card.id}:${card.is_foil}`} card={card} binder={kind === 'binder'} onSelect={() => setSelected(card)} /> : <div key={`empty-${pocket}`} className="rb-card-slot" aria-hidden="true"><span /></div>;
       })}
     </div>
-    <p className="rb-sheet-number">{(filters.page - 1) * 2 + side + 1}</p>
+    <p className="rb-sheet-number">Page {(filters.page - 1) * 2 + side + 1}</p>
   </React.Fragment>) : null;
-  return <div className="rb-browser">
-    <div className="rb-collection-layout">
-      <div className="rb-collection-main">
-        <div className="rb-collection-controls">
-        <div className="rb-color-tabs" role="group" aria-label="Filter by domain">
-          <button title="All domains" aria-label="All domains" aria-pressed={!filters.domain} onClick={() => change('domain', '')}>✦</button>
-          {DOMAINS.map(([domain, color]) => <button key={domain} title={domain} aria-label={domain} className="rb-domain-button" style={{ '--gem': color }} aria-pressed={filters.domain === domain} onClick={() => change('domain', filters.domain === domain ? '' : domain)}><span aria-hidden="true">◆</span><span className="rb-sr-only">{domain}</span></button>)}
-        </div>
-        <label className="rb-set-tab">Expansion<select aria-label="Filter by set" value={filters.set} onChange={event => change('set', event.target.value)}><option value="">All sets</option>{facets.data?.sets.map(set => <option key={set.id} value={set.id}>{set.name}</option>)}</select></label>
-        </div>
-        <div className="rb-collection-heading"><h2>{filters.domain || (kind === 'catalog' ? 'All Cards' : 'My Binder')}</h2>
-      {kind === 'catalog' && <div className="rb-ownership-toggle"><button aria-pressed={showUnowned} onClick={() => { setShowUnowned(value => !value); change('page', 1); }}>Show unowned</button><span className="rb-sr-only">{showUnowned ? 'Missing cards appear faded in their collection positions.' : 'Showing owned cards only.'}</span></div>}
-        </div>
-        <div className="rb-book">
+  const turn = delta => { setTurnDirection(delta); setFilters(current => ({ ...current, page: current.page + delta })); setSelected(null); };
+  const totalSpreads = data ? Math.max(1, Math.ceil(data.total / 8)) : 1;
+  return <div className="rb-browser hs-browser">
+    <div className="hs-book">
+      <h2 className="hs-book-title">{heading}</h2>
       <main className="rb-results" aria-label={`${title} cards`}>
         {resource.error ? <div className="rb-state" role="alert"><h3>Couldn’t open the {title.toLowerCase()}</h3><p>{resource.error}</p><button onClick={() => setRetry(value => value + 1)}>Try again</button></div>
-            : data?.items.length === 0 ? <div className="rb-state"><span aria-hidden="true">◇</span><h3>{filters.q || filters.set || filters.rarity || filters.finish || filters.domain || filters.energy !== '' || filters.page > 1 ? 'No matching cards' : kind === 'binder' ? 'The Binder is empty' : !showUnowned ? 'Your collection is waiting' : 'The collection is waiting for its first import'}</h3><p>{filters.q || filters.set || filters.rarity || filters.finish || filters.domain || filters.energy !== '' || filters.page > 1 ? 'Try clearing your filters or returning to the first page.' : kind === 'binder' ? 'Owned cards will appear here once the owner records them. Browsing the Catalog does not add cards.' : !showUnowned ? 'No owned cards are recorded yet. Turn on Show unowned to explore the collection.' : 'Real card records will appear after a successful Catalog import.'}</p></div>
-              : <><div className="rb-count" role="status"><span>{data ? <><b>{data.total.toLocaleString()}</b> {kind === 'binder' ? 'owned printings' : showUnowned ? 'cards in the collection' : 'owned cards'}</> : 'Opening the next spread…'}</span><span>TWO PAGES · FOUR POCKETS EACH</span></div>
-                <PageTurn page={filters.page} direction={turnDirection} resetKey={spreadKey} pages={pages} onTurning={setTurning} fallback={<div className="rb-state" role="status">The archive is opening…</div>} />
-              </>}
-        {data && !resource.loading && !resource.error && data.total > 8 && <div className="rb-pagination"><button aria-label="Previous page" disabled={turning || filters.page <= 1} onClick={() => { setTurnDirection(-1); setFilters(current => ({ ...current, page: current.page - 1 })); setSelected(null); }}>‹ <span>Previous</span></button><span>Pages {(filters.page - 1) * 2 + 1}–{filters.page * 2} · Spread {filters.page} of {Math.ceil(data.total / 8)}</span><button aria-label="Next page" disabled={turning || filters.page * 8 >= data.total} onClick={() => { setTurnDirection(1); setFilters(current => ({ ...current, page: current.page + 1 })); setSelected(null); }}><span>Next</span> ›</button></div>}
+          : data?.items.length === 0 ? <div className="rb-state"><span aria-hidden="true">◇</span><h3>{filtered || filters.page > 1 ? 'No matching cards' : kind === 'binder' ? 'No owned versions here yet' : showUnowned ? 'No cards in this set yet' : 'No owned cards in this set yet'}</h3><p>{filtered ? 'Try clearing the filters.' : !showUnowned && kind === 'catalog' ? 'Turn on Missing to see the cards not owned yet.' : ''}</p></div>
+            : <PageTurn page={filters.page} direction={turnDirection} resetKey={spreadKey} pages={pages} onTurning={setTurning} fallback={<div className="rb-state" role="status">Opening the book…</div>} />}
       </main>
+      {data && data.total > 8 && <>
+        <button className="hs-page-arrow hs-page-prev" aria-label="Previous page" disabled={turning || filters.page <= 1} onClick={() => turn(-1)}>‹</button>
+        <button className="hs-page-arrow hs-page-next" aria-label="Next page" disabled={turning || filters.page >= totalSpreads} onClick={() => turn(1)}>›</button>
+      </>}
+      <p className="hs-book-count" role="status">{data ? `${data.total.toLocaleString()} ${kind === 'binder' ? 'owned versions' : showUnowned ? 'cards' : 'owned cards'} · spread ${filters.page} of ${totalSpreads}` : ''}</p>
+    </div>
+    <div className="hs-bottombar">
+      <div className="hs-domains" role="group" aria-label="Filter by domain">
+        <button className="hs-domain-all" title="All domains" aria-pressed={!filters.domain} onClick={() => change('domain', '')}><span aria-hidden="true">∞</span><span className="rb-sr-only">All domains</span></button>
+        {DOMAINS.map(([domain, color]) => <button key={domain} className="hs-domain" title={domain} style={{ '--gem': color }} aria-pressed={filters.domain === domain} onClick={() => change('domain', filters.domain === domain ? '' : domain)}><span className="rb-sr-only">{domain}</span></button>)}
       </div>
-        <div className="rb-toolbox">
-        <div className="rb-energy-filter" role="group" aria-label="Filter by energy">
-          <span>Energy</span><button aria-pressed={filters.energy === ''} onClick={() => change('energy', '')}>All</button>
-          {Array.from({ length: 13 }, (_, energy) => <button key={energy} aria-pressed={filters.energy === String(energy)} onClick={() => change('energy', filters.energy === String(energy) ? '' : String(energy))}>{energy}</button>)}
-          <label>Exact cost<input type="number" min="0" max="99" aria-label="Exact energy cost" value={filters.energy} onChange={event => { const value = event.target.value; if (value === '' || /^(?:[0-9]|[1-9][0-9])$/.test(value)) change('energy', value); }} /></label>
-        </div>
-        <form className="rb-filters" onSubmit={event => { event.preventDefault(); change('q', search.trim()); }}>
-          <label className="rb-search">Find a card<div><input type="search" maxLength={100} value={search} placeholder="Card name…" onChange={event => setSearch(event.target.value)} /><button type="submit" aria-label="Search cards">⌕</button></div></label>
+      <form className="hs-search" role="search" onSubmit={event => { event.preventDefault(); change('q', search.trim()); }}>
+        <span aria-hidden="true">⌕</span><input type="search" aria-label="Search cards" maxLength={100} value={search} placeholder="Search" onChange={event => { setSearch(event.target.value); if (!event.target.value) change('q', ''); }} />
+      </form>
+      <details className="hs-more-filters"><summary>Filters{filters.rarity || filters.energy !== '' ? ' •' : ''}</summary>
+        <div>
           <label>Rarity<select value={filters.rarity} onChange={event => change('rarity', event.target.value)}><option value="">All rarities</option>{facets.data?.rarities.map(rarity => <option key={rarity}>{rarity}</option>)}</select></label>
-          <button type="button" className="rb-clear" onClick={() => { setSearch(''); setFilters(EMPTY_FILTERS); setSelected(null); }}>Reset filters</button>
-        </form>
-        {facets.error && !resource.error && <p className="rb-filter-warning" role="status">Set and rarity filters could not load. <button onClick={() => setRetry(value => value + 1)}>Retry</button></p>}
+          <label>Energy<select value={filters.energy} onChange={event => change('energy', event.target.value)}><option value="">Any</option>{Array.from({ length: 13 }, (_, energy) => <option key={energy} value={energy}>{energy}</option>)}</select></label>
+          <button type="button" onClick={() => { setSearch(''); setFilters({ ...EMPTY_FILTERS, set }); setSelected(null); }}>Reset filters</button>
         </div>
-      </div>
-      <DeckRack resource={decks} />
+      </details>
+      {kind === 'catalog' && <button className="hs-missing" aria-pressed={showUnowned} onClick={() => { setShowUnowned(value => !value); change('page', 1); }}>Missing</button>}
     </div>
     <details className="rb-collection-extras"><summary>Collection overview & value</summary><CollectionOverview resource={summary} retry={retry} onRefresh={() => setRetry(value => value + 1)} />
-    {facets.data && <details className="rb-set-progress"><summary>Set completion</summary><p>Each catalog printing counts once, regardless of finish or copy count.</p><ul>{facets.data.sets.map(set => <li key={set.id}><span>{set.name}: {set.owned_cards} / {set.cards}</span><progress aria-label={`${set.name} owned printings`} value={set.owned_cards} max={set.cards || 1} /></li>)}</ul></details>}
+    {facets.data && <details className="rb-set-progress"><summary>Set completion</summary><p>Each catalog printing counts once, regardless of finish or copy count.</p><ul>{facets.data.sets.map(item => <li key={item.id}><span>{item.name}: {item.owned_cards} / {item.cards}</span><progress aria-label={`${item.name} owned printings`} value={item.owned_cards} max={item.cards || 1} /></li>)}</ul></details>}
     </details>
     {selected && <CardInspector key={`${selected.id}:${selected.is_foil}`} card={selected} onClose={() => setSelected(null)} />}
   </div>;
@@ -157,7 +169,7 @@ function Card({ card, binder, onSelect }) {
   const [broken, setBroken] = useState(false);
   return <article className={`rb-card${!binder && !card.quantity ? ' rb-card-unowned' : ''}`}>
     <button className="rb-card-open" aria-label={`Card details & prices for ${card.name}`} onClick={onSelect} onContextMenu={event => { event.preventDefault(); onSelect(); }}><span className="rb-art">{card.image_url && !broken ? <img src={card.image_url} alt={card.name} loading="eager" referrerPolicy="no-referrer" onError={() => setBroken(true)} /> : <span className="rb-art-missing"><span aria-hidden="true">✦</span>{card.name}<small>Artwork unavailable</small></span>}</span></button>
-    <div className="rb-card-caption"><span>{card.quantity > 0 ? `${card.quantity} × owned` : 'Not owned'}</span></div>
+    <div className="rb-card-caption hs-plaque"><span>{card.quantity > 0 ? `x${card.quantity}` : ''}</span></div>
     <div className="rb-card-body rb-sr-only"><p className="rb-meta">{card.set_name} · {card.rarity}</p><h3>{card.name}</h3>
       <dl className="rb-prices">{(!binder || card.normal_quantity > 0) && <div><dt>Normal</dt><dd>{money(card.normal_price)}</dd></div>}{(!binder || card.foil_quantity > 0) && <div><dt>Foil</dt><dd>{money(card.foil_price)}</dd></div>}</dl>
       <p className="rb-gameplay">{card.domains?.join(' · ') || 'Domain unknown'} · {card.energy == null ? 'Energy —' : `Energy ${card.energy}`}</p>

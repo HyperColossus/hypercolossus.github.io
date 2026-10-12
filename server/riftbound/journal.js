@@ -31,7 +31,9 @@ export function parseDecks(grid, cards) {
   for (const card of cards) {
     const key = cardName(card.name);
     const current = byName.get(key);
-    if (!current || (!/^\d+$/.test(current.collector_number ?? '') && /^\d+$/.test(card.collector_number ?? ''))) byName.set(key, card);
+    // Prefer the plain-named base printing over promos and alternate treatments.
+    const rank = c => (/\(/.test(c.name) ? 2 : 0) + (/^\d+$/.test(c.collector_number ?? '') ? 0 : 1);
+    if (!current || rank(card) < rank(current)) byName.set(key, card);
   }
   const decks = new Map();
   for (const get of rows.slice(0, 2000)) {

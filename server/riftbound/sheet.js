@@ -135,7 +135,7 @@ export function sheetResponse(snapshot, route, filters, historyId = null) {
     return {card:{id:card.id,name:card.name},...page(observations)};
   }
   if(route==='ownership')return {items:cards.filter(c=>c.quantity).map(c=>({id:c.id,quantity:String(c.quantity)})),...source};
-  if(route==='facets')return {sets:INVENTORY_TABS.map(id=>({id,name:cards.find(c=>c.set_id===id)?.set_name??id,cards:cards.filter(c=>c.set_id===id).length,owned_cards:cards.filter(c=>c.set_id===id&&c.quantity).length})),rarities:[...new Set(cards.map(c=>c.rarity))].sort(),...source};
+  if(route==='facets')return {sets:INVENTORY_TABS.map(id=>({id,name:cards.find(c=>c.set_id===id)?.set_name??id,cards:cards.filter(c=>c.set_id===id).length,owned_cards:cards.filter(c=>c.set_id===id&&c.quantity).length,cover:(cards.find(c=>c.set_id===id&&c.image_url&&/^\d+$/.test(c.collector_number??''))??cards.find(c=>c.set_id===id&&c.image_url))?.image_url??null})),rarities:[...new Set(cards.map(c=>c.rarity))].sort(),...source};
   if(route==='valuation')throw new InputError('Past valuations require recorded database history; the sheet holds current prices only');
   if(route==='summary'){
     let copies=0,normal=0,foil=0,priced=0,unpriced=0,cents=0;const dates=[];
