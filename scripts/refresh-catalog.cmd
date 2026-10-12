@@ -2,9 +2,11 @@
 rem Refresh the bundled Riftbound catalog from the local Docker database.
 cd /d "%~dp0.."
 call npm run db:up || goto fail
+rem Load the latest RiftHunt catalog into the local database (keeps ownership and prices).
+call npm run catalog:import || goto fail
 call npm run catalog:snapshot || goto fail
 call npm test || goto fail
-git add server/riftbound/catalog-snapshot.json
+git add -A server/riftbound/catalog-snapshot.json scripts
 git commit -m "Refresh Riftbound catalog snapshot from local database"
 git push
 echo.

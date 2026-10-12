@@ -50,6 +50,13 @@ try {
     .map(card => Object.fromEntries(Object.entries(card).filter(([, value]) => value !== null && value !== false)));
   const snapshot = { version: 1, generated_at: new Date().toISOString(), source: data.source, cards, sealed: data.sealed };
   validateCatalog(snapshot);
+  // Never replace a good snapshot with an empty or much smaller one (e.g. a fresh, unimported database).
+  const previous = await readFile(OUTPUT, 'utf8').then(JSON.parse).catch(() => null);
+  if (cards.length < 100 || (previous?.cards?.length && cards.length < previous.cards.length * 0.9)) {
+    console.error(`Refusing to write: only ${cards.length} cards have details (current snapshot has ${previous?.cards?.length ?? 0}).`);
+    console.error('If the database is new or empty, run npm run catalog:import first.');
+    process.exit(1);
+  }
   await writeFile(OUTPUT, JSON.stringify(snapshot) + '\n');
   console.log(`Wrote catalog snapshot: ${cards.length} cards with gameplay details, ${data.sealed.length} sealed products (${data.source}).`);
   console.log('Rebuild and deploy the site to publish it.');
