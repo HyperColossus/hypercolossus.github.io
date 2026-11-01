@@ -1,0 +1,16 @@
+# Cola OS web proxy (Cloudflare Worker). Deploy with:  npx wrangler deploy   (see README.md)
+name = "cola-proxy"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+# Served at https://proxy.hypercoloss.us (needs hypercoloss.us active on Cloudflare DNS).
+routes = [{ pattern = "proxy.hypercoloss.us", custom_domain = true }]
+
+[vars]
+# Sites allowed to show proxied pages (space-separated). Add your custom domain here.
+ALLOWED_ORIGINS = "https://hypercoloss.us https://www.hypercoloss.us https://hypercolossus.pages.dev https://hypercolossus.github.io http://localhost:5173 http://localhost:4173"
+
+# Local development only (npx wrangler dev): lets the proxy fetch test pages on localhost.
+[env.dev.vars]
+ALLOWED_ORIGINS = "http://localhost:5173 http://localhost:4173 http://localhost:4250"
+ALLOW_PRIVATE_HOSTS = "1"

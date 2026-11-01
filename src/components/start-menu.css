@@ -1,0 +1,57 @@
+/* Vista-era Start menu: Aero glass frame, white program list, dark link column, glossy power button.
+   Original styling, no Microsoft logos or assets. Sits above the Cola OS taskbar. */
+.vista-start {
+  position: absolute; left: 2px; bottom: 30px; z-index: 10001; width: 420px;
+  display: grid; grid-template-columns: minmax(0, 1fr) 150px; grid-template-areas: 'left right' 'search power'; gap: 6px 8px;
+  padding: 8px 8px 8px; border: 1px solid #ffffff5c; border-radius: 9px 9px 0 0;
+  background: linear-gradient(180deg, #4a5d78f0 0%, #1d2838f5 38%, #0c1219fa 100%);
+  box-shadow: inset 0 1px #ffffff66, inset 0 0 0 1px #0008, 0 10px 28px #000a;
+  backdrop-filter: blur(8px); color: #fff; font: 12px/1.35 'Segoe UI', Tahoma, sans-serif;
+  animation: vista-in .14s ease-out;
+}
+@keyframes vista-in { from { opacity: 0; transform: translateY(6px); } }
+.vista-start::before { content: ''; position: absolute; inset: 1px 1px auto; height: 40%; border-radius: 8px 8px 50% 50% / 8px 8px 16px 16px; background: linear-gradient(#ffffff26, #ffffff05); pointer-events: none; }
+.vista-start button, .vista-start a { font: inherit; color: inherit; text-decoration: none; }
+
+/* User picture, overlapping the frame's top edge */
+.vista-picture { position: absolute; top: -30px; right: 47px; display: grid; place-items: center; width: 58px; height: 58px; border-radius: 7px; background: linear-gradient(160deg, #fbfdff, #c9d7e8 55%, #a9bdd6); box-shadow: 0 0 0 1px #fffc, 0 0 0 3px #3b4f6b, 0 3px 10px #000a; }
+
+/* Left: white program list */
+.vista-left { grid-area: left; display: flex; flex-direction: column; min-height: 330px; padding: 6px; border: 1px solid #6c8099; border-radius: 4px; background: #fff; color: #000; }
+.vista-list { flex: 1; display: grid; align-content: start; gap: 1px; }
+.vista-left hr { margin: 5px 4px; border: 0; border-top: 1px solid #d5dde8; }
+.vista-item { display: flex; align-items: center; gap: 9px; width: 100%; padding: 4px 6px; border: 1px solid transparent; border-radius: 3px; background: none; text-align: left; }
+.vista-item span { display: grid; min-width: 0; }
+.vista-item b { font-weight: 400; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.vista-item.is-big b { font-weight: 700; }
+.vista-item small { color: #6d6d6d; font-size: 11px; }
+.vista-item:hover, .vista-item:focus-visible { border-color: #a7c4e6; background: linear-gradient(#f4f9fe, #dcebfa); outline: 0 !important; }
+.vista-all { display: flex; align-items: center; gap: 6px; margin-top: 6px; padding: 5px 8px; border: 1px solid transparent; border-top-color: #d5dde8; background: none; font-weight: 700 !important; color: #1b3d6e !important; text-align: left; }
+.vista-all svg { color: #2f9a1f; }
+.vista-all:hover { border-color: #a7c4e6; border-radius: 3px; background: linear-gradient(#f4f9fe, #dcebfa); }
+.vista-heading { padding: 2px 6px 4px; color: #1b3d6e; font-weight: 700; border-bottom: 1px solid #d5dde8; margin-bottom: 4px; }
+.vista-empty { padding: 8px 6px; color: #6d6d6d; font-style: italic; }
+
+/* Right: dark glass link column */
+.vista-right { grid-area: right; display: grid; align-content: start; gap: 1px; padding-top: 36px; }
+.vista-right button, .vista-right a { display: block; width: 100%; padding: 5px 10px; border: 0; border-radius: 3px; background: none; text-align: left; text-shadow: 0 1px 2px #000c; }
+.vista-right .is-strong { font-weight: 700 !important; }
+.vista-right button:hover, .vista-right a:hover, .vista-right button:focus-visible, .vista-right a:focus-visible { background: linear-gradient(#ffffff40, #ffffff12); box-shadow: inset 0 0 0 1px #ffffff55; outline: 0 !important; }
+.vista-right hr { margin: 4px 8px; border: 0; border-top: 1px solid #ffffff2e; }
+
+/* Bottom row: Start Search + power */
+.vista-search { grid-area: search; position: relative; display: flex; align-items: center; }
+.vista-search input { width: 100%; height: 26px; padding: 0 26px 0 8px; border: 1px solid #7a93b4; border-radius: 3px; background: #fff; color: #000; font: 12px 'Segoe UI', Tahoma, sans-serif; outline: 0; box-shadow: inset 0 1px 2px #0002; }
+.vista-search input::placeholder { color: #8a8a8a; font-style: italic; }
+.vista-search input::-webkit-search-cancel-button { display: none; }
+.vista-search svg { position: absolute; right: 8px; color: #3b6aa8; pointer-events: none; }
+.vista-power { grid-area: power; position: relative; display: flex; align-items: center; justify-content: flex-end; gap: 3px; padding-right: 4px; }
+.vista-power-btn { display: grid; place-items: center; width: 34px; height: 26px; border: 1px solid #5a1500; border-radius: 4px; color: #fff !important; background: linear-gradient(#f59a6a, #e0521f 48%, #b8350c 52%, #d8622e); box-shadow: inset 0 1px #ffffff80, 0 0 6px #ff6a2a55; }
+.vista-power-btn:hover { background: linear-gradient(#ffb58e, #f06a36 48%, #cc4211 52%, #ea7a45); box-shadow: inset 0 1px #ffffff99, 0 0 10px #ff7a3a99; }
+.vista-arrow { display: grid; place-items: center; width: 20px; height: 26px; border: 1px solid #0008; border-radius: 4px; background: linear-gradient(#5f7390, #2a3a52 50%, #1c2a3e 52%, #34465f); box-shadow: inset 0 1px #ffffff55; }
+.vista-arrow:hover { background: linear-gradient(#7890b0, #3b4f6c 50%, #2a3c56 52%, #4a5f7c); }
+.vista-power-menu { position: absolute; right: 0; bottom: 32px; display: grid; min-width: 120px; padding: 2px; border: 1px solid #97a5b8; background: #f7f9fc; color: #000; box-shadow: 2px 3px 8px #0006; }
+.vista-power-menu button { padding: 4px 16px; border: 1px solid transparent; background: none; text-align: left; }
+.vista-power-menu button:hover { border-color: #a7c4e6; background: linear-gradient(#f4f9fe, #dcebfa); }
+
+@media (prefers-reduced-motion: reduce) { .vista-start { animation: none; } }

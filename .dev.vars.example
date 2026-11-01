@@ -1,0 +1,5 @@
+# Copy to .dev.vars (ignored by Git). Keep credentials out of VITE_* variables.
+RIFTBOUND_SHEET_ENABLED="true"
+RIFTBOUND_SHEET_ID="1pytSoSo9Tu1wfW8RnvIIaIZu5CQyVPYVQM3mk3TfF2g"
+# Paste the service-account JSON as one compact JSON string inside single quotes.
+GOOGLE_SERVICE_ACCOUNT_JSON='{"type":"service_account","client_email":"REPLACE","private_key":"REPLACE"}'

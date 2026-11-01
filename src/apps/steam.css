@@ -1,0 +1,48 @@
+/* Standalone game client in the style of the original 2003-era Steam (olive "VGUI" skin). No Valve assets. */
+.steam {
+  --st-bg: #4c5844; --st-panel: #3e4637; --st-deep: #2f3529; --st-hi: #8c9880; --st-lo: #282e22;
+  --st-text: #dee5d7; --st-dim: #a0aa95; --st-gold: #c4b550; --st-select: #958831;
+  display: flex; flex-direction: column; height: 100%; background: var(--st-bg); color: var(--st-text); font: 11px/1.45 Tahoma, Verdana, sans-serif;
+}
+.steam button { font: inherit; color: inherit; }
+.steam button:focus-visible, .steam .st-row:focus-visible { outline: 1px dotted var(--st-gold) !important; outline-offset: -2px; }
+.st-tabs { display: flex; gap: 2px; padding: 4px 8px 0; }
+.st-tabs button { padding: 4px 14px 3px; border: 1px solid var(--st-hi); border-bottom: 0; background: var(--st-panel); color: var(--st-dim); }
+.st-tabs button[aria-selected='true'] { position: relative; top: 1px; background: var(--st-bg); color: var(--st-gold); font-weight: 700; }
+.st-tabs button:hover { color: var(--st-text); }
+.st-panel { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; margin: 0 8px; padding: 8px; border: 1px solid var(--st-hi); border-color: var(--st-hi) var(--st-lo) var(--st-lo) var(--st-hi); overflow: auto; }
+
+/* Games list */
+.st-table { flex: 1; min-height: 120px; display: flex; flex-direction: column; border: 1px solid; border-color: var(--st-lo) var(--st-hi) var(--st-hi) var(--st-lo); background: var(--st-panel); }
+.st-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 8px; align-items: center; padding: 3px 8px; cursor: default; }
+.st-row > span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.st-head { color: var(--st-dim); background: var(--st-bg); border-bottom: 1px solid var(--st-lo); text-transform: uppercase; font-size: 10px; letter-spacing: .04em; }
+.st-rows { flex: 1; overflow: auto; }
+.st-rows .st-row:hover { background: #4a5540; }
+.st-row.is-selected, .st-rows .st-row.is-selected:hover { background: var(--st-select); color: #fff; }
+.st-game { display: flex; align-items: center; gap: 6px; font-weight: 700; }
+.st-game svg { flex-shrink: 0; }
+
+/* Buttons */
+.st-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.st-button { display: inline-block; padding: 3px 14px; border: 1px solid; border-color: var(--st-hi) var(--st-lo) var(--st-lo) var(--st-hi); background: var(--st-bg); color: var(--st-text); text-decoration: none; }
+.st-button:hover:not(:disabled) { color: var(--st-gold); }
+.st-button:active:not(:disabled) { border-color: var(--st-lo) var(--st-hi) var(--st-hi) var(--st-lo); }
+.st-button:disabled { color: #737d69; opacity: 1; }
+.st-play { min-width: 64px; text-align: center; font-weight: 700; }
+.st-tip { margin-left: auto; color: var(--st-dim); font-size: 10px; }
+.st-link { align-self: flex-start; padding: 0; border: 0; background: none; color: var(--st-gold); text-decoration: underline; }
+
+/* Details & developer */
+.st-detail, .st-dev { display: flex; flex-direction: column; gap: 8px; }
+.st-detail-body, .st-dev { display: grid; gap: 8px; align-content: start; }
+.steam h2 { font: 700 16px Verdana, Tahoma, sans-serif; color: var(--st-gold); }
+.st-sub { margin-top: -6px; color: var(--st-dim); }
+.st-desc { color: var(--st-text); }
+.st-props { display: grid; grid-template-columns: 96px 1fr; gap: 3px 10px; margin: 0; padding: 6px 8px; background: var(--st-panel); border: 1px solid; border-color: var(--st-lo) var(--st-hi) var(--st-hi) var(--st-lo); }
+.st-props dt { color: var(--st-dim); }
+.st-props dd { margin: 0; }
+.st-props small { color: var(--st-dim); }
+.st-tags { color: var(--st-dim); }
+.st-status { padding: 3px 10px 4px; color: var(--st-dim); font-size: 10px; }
+

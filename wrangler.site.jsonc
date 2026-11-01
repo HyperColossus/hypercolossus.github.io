@@ -1,0 +1,44 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hypercolossus-site-staging",
+  "main": "server/index.js",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api", "/api/*"]
+  },
+  "dev": { "port": 8787 },
+  "triggers": { "crons": [] },
+  "vars": {
+    "RIFTBOUND_SHEET_ENABLED": "false",
+    "RIFTBOUND_SHEET_ID": "1pytSoSo9Tu1wfW8RnvIIaIZu5CQyVPYVQM3mk3TfF2g"
+  },
+  "env": {
+    "sheet_preview": {
+      "name": "hypercolossus-sheet-preview",
+      "vars": {
+        "RIFTBOUND_SHEET_ENABLED": "true",
+        "RIFTBOUND_SHEET_ID": "1pytSoSo9Tu1wfW8RnvIIaIZu5CQyVPYVQM3mk3TfF2g"
+      }
+    },
+    "local": {
+      "name": "hypercolossus-site-local",
+      "vars": {
+        "RIFTBOUND_SHEET_ENABLED": "false",
+        "RIFTBOUND_SHEET_ID": "1pytSoSo9Tu1wfW8RnvIIaIZu5CQyVPYVQM3mk3TfF2g"
+      },
+      "hyperdrive": [
+        { "binding": "HYPERDRIVE", "id": "00000000000000000000000000000000" }
+      ]
+    }
+  }
+  // After provisioning staging Hyperdrive with query caching disabled, add:
+  // "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "<actual staging id>" }]
+  // No domains or scheduled jobs are enabled by this foundation.
+  // The local environment's dummy ID is used only by wrangler dev --local.
+}

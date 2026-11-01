@@ -1,0 +1,57 @@
+/* Cola OS — the 90s-retro desktop shell. Apps keep their own styles inside their windows. */
+.cola-os {
+  --os-desktop: #0b7c7a; --os-face: #c0c0c0; --os-light: #dfdfdf; --os-white: #fff; --os-shadow: #808080; --os-dark: #000;
+  --os-title: #000080; --os-title-2: #1084d0; --os-select: #000080;
+  --os-font: Tahoma, 'MS Sans Serif', Geneva, Verdana, sans-serif; --os-pixel: 'Silkscreen', 'Courier New', monospace;
+  --raised: inset -1px -1px var(--os-dark), inset 1px 1px var(--os-white), inset -2px -2px var(--os-shadow), inset 2px 2px var(--os-light);
+  --sunken: inset 1px 1px var(--os-shadow), inset -1px -1px var(--os-white), inset 2px 2px var(--os-dark), inset -2px -2px var(--os-light);
+  position: relative; width: 100%; height: 100%; overflow: hidden; display: flex; flex-direction: column;
+  background: var(--os-desktop); color: #000; font: 12px/1.3 var(--os-font);
+}
+:where(.cola-os) button { font: inherit; color: inherit; }
+.cola-os button:focus-visible { outline: 1px dotted #000 !important; outline-offset: -4px; }
+
+/* ---------- Desktop ---------- */
+.os-workspace { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+.os-watermark { position: absolute; right: 22px; bottom: 16px; display: flex; align-items: center; gap: 10px; font: 22px var(--os-pixel); color: #ffffff26; pointer-events: none; }
+.os-watermark svg { opacity: .18; }
+.os-icons { position: absolute; top: 10px; left: 8px; display: grid; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.os-icon { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 84px; padding: 3px 2px; border: 0; background: none; cursor: default; }
+.os-icon span { padding: 1px 3px; color: #fff; font-size: 11px; line-height: 1.25; text-align: center; text-shadow: 1px 1px 0 #0006; overflow-wrap: anywhere; }
+.os-icon.is-selected span { background: var(--os-select); outline: 1px dotted #fff; text-shadow: none; }
+.os-icon.is-selected svg { filter: brightness(.7) sepia(1) hue-rotate(190deg) saturate(3); }
+
+/* ---------- Taskbar ---------- */
+.os-taskbar { position: relative; z-index: 10000; display: flex; align-items: center; gap: 4px; height: 30px; padding: 2px 12px; flex-shrink: 0; background: var(--os-face); box-shadow: inset 0 1px var(--os-light), inset 0 2px var(--os-white); }
+.os-start, .os-task { display: flex; align-items: center; gap: 4px; height: 24px; padding: 0 6px; border: 0; background: var(--os-face); box-shadow: var(--raised); }
+.os-start { font-weight: 700 !important; padding-right: 8px; }
+.os-start.is-pressed, .os-task.is-pressed { box-shadow: var(--sunken); padding-top: 1px; }
+.os-task.is-pressed { background: repeating-conic-gradient(var(--os-white) 0 25%, var(--os-light) 0 50%) 0 0 / 2px 2px; font-weight: 700 !important; }
+.os-taskbar-sep { width: 2px; height: 22px; box-shadow: inset 1px 0 var(--os-shadow), inset -1px 0 var(--os-white); }
+.os-tasks { display: flex; gap: 3px; flex: 1; min-width: 0; }
+.os-task { width: 150px; min-width: 0; justify-content: flex-start; }
+.os-task span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.os-tray { display: flex; align-items: center; height: 24px; padding: 0 10px; box-shadow: inset 1px 1px var(--os-shadow), inset -1px -1px var(--os-white); font-size: 11px; }
+
+
+/* ---------- Standby & boot ---------- */
+.os-standby, .os-boot { position: absolute; inset: 0; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border: 0; background: #000; color: #9a9a9a; }
+.os-standby { cursor: default; pointer-events: none; } /* mouse users press the 3D power button */
+.os-boot-name { font: 34px var(--os-pixel); color: #e9e9e9; letter-spacing: .02em; }
+.os-boot-name b { color: #7fe0c0; font-weight: 400; margin-left: 8px; }
+.os-boot-bar { position: relative; width: 180px; height: 14px; margin-top: 10px; padding: 2px; border: 1px solid #7a7a7a; }
+.os-boot-bar i { display: block; height: 100%; background: repeating-linear-gradient(90deg, #7fe0c0 0 10px, transparent 10px 12px); animation: os-load 1.1s steps(15, end) both; }
+.os-boot-hint { position: absolute; bottom: 18px; font-size: 10px; color: #5c5c5c; }
+@keyframes os-blink { 50% { opacity: 0; } }
+@keyframes os-load { from { width: 0; } to { width: 100%; } }
+
+/* ---------- Notepad ---------- */
+.notepad { display: flex; flex-direction: column; height: 100%; background: var(--os-face); }
+.notepad-text { flex: 1; min-height: 0; margin: 0; padding: 4px 6px; overflow: auto; background: #fff; box-shadow: var(--sunken); font: 12px/1.45 'Lucida Console', 'Courier New', monospace; white-space: pre-wrap; color: #000; }
+.notepad-text:focus-visible { outline: 0 !important; }
+
+/* Classic-frame scrollbars (inside Cola OS windows). */
+.cola-os ::-webkit-scrollbar { width: 16px; height: 16px; }
+.cola-os ::-webkit-scrollbar-track { background: repeating-conic-gradient(var(--os-white) 0 25%, var(--os-light) 0 50%) 0 0 / 2px 2px; }
+.cola-os ::-webkit-scrollbar-thumb { background: var(--os-face); border-radius: 0; box-shadow: var(--raised); }
+

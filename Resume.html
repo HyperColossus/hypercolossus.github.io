@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Zachary Siegel — Resume</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: light;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #2a2723;
+      font-family: 'Geist', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+    /* Subtle page-of-paper feel in browser view */
+    .stage {
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 24px 80px;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(255,92,46,0.08), transparent 60%),
+        #2a2723;
+    }
+    .sheet {
+      width: 816px;
+      height: 1056px;
+      background: #F4EFE4;
+      box-shadow:
+        0 1px 0 rgba(0,0,0,0.04),
+        0 25px 60px -20px rgba(0,0,0,0.55),
+        0 8px 20px -8px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .resume {
+      box-sizing: border-box;
+      width: 816px;
+      height: 1056px;
+      overflow: hidden;
+      position: relative;
+      /* Keep the dark sidebar ("black bar") when saving to PDF. */
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .resume *, .resume *::before, .resume *::after {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .resume p { margin: 0; }
+    .resume ul { margin: 0; padding: 0; list-style: none; }
+
+    /* Back-to-portfolio pill */
+    .back-pill {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 2;
+      font-family: 'Geist Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(244,239,228,0.78);
+      text-decoration: none;
+      padding: 8px 14px;
+      border: 1px solid rgba(244,239,228,0.22);
+      border-radius: 999px;
+      background: rgba(244,239,228,0.06);
+      transition: color .25s, border-color .25s, background .25s;
+    }
+    .back-pill:hover {
+      color: #ff5c2e;
+      border-color: rgba(255,92,46,0.5);
+      background: rgba(255,92,46,0.08);
+    }
+
+    /* Helper hint */
+    .hint {
+      position: fixed;
+      bottom: 14px;
+      left: 14px;
+      font-family: 'Geist Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(244,239,228,0.5);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .hint kbd {
+      font-family: 'Geist Mono', monospace;
+      background: rgba(244,239,228,0.12);
+      border: 1px solid rgba(244,239,228,0.18);
+      border-radius: 3px;
+      padding: 1px 5px;
+      color: rgba(244,239,228,0.78);
+    }
+
+    /* Print: full-bleed letter, no chrome */
+    @page { size: 8.5in 11in; margin: 0; }
+    @media print {
+      html, body { background: #fff; height: auto; }
+      .stage { padding: 0; background: #fff; min-height: auto; display: block; }
+      .sheet { box-shadow: none; margin: 0; }
+      .hint, .back-pill { display: none !important; }
+      [class^="twk"], [class*=" twk"] { display: none !important; }
+    }
+  </style>
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="resume.jsx"></script>
+</head>
+<body>
+  <a class="back-pill" href="Portfolio.html">← Back to portfolio</a>
+  <div id="root"></div>
+  <div class="hint">Press <kbd>⌘ P</kbd> / <kbd>Ctrl P</kbd> to print or save as PDF · keep <kbd>Background graphics</kbd> on</div>
+</body>
+</html>

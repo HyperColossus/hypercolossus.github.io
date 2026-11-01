@@ -1,0 +1,80 @@
+// Case studies shown in the browser (and later the #mobile page). Source: resume.jsx + media.js.
+// Only real facts. `stats` must be numbers Zack has stated; add results as they become available.
+// `posts`: links to standout X posts (https://x.com/<account>/status/<id>). They're shown as
+// "Featured posts" when someone opens the account's X link in the Cola OS browser.
+export const work = [
+  {
+    id: 'watchnacl',
+    discipline: 'Social & esports',
+    org: 'watchNACL',
+    company: 'Liga ACE',
+    role: 'Social Media Manager',
+    period: 'Apr 2026 — Present',
+    headline: 'The official voice of the NACL.',
+    summary: 'Running the official @watchNACL account for the North American Challengers League, the tier-2 League of Legends circuit that feeds LCS rosters.',
+    did: [
+      'Content across X: match coverage, highlights, storylines, and spotlights on developing talent.',
+      'Grounded in an in-depth understanding of the League of Legends community and gaming communities as a whole.',
+    ],
+    stats: [],
+    links: [{ label: '@watchNACL on X', url: 'https://x.com/watchNACL' }],
+    posts: [],
+  },
+  {
+    id: 'lpl-english',
+    discipline: 'Social & esports',
+    org: 'LPL English',
+    company: 'LPL English',
+    role: 'Social Media Manager',
+    period: 'Apr 2025 — Present',
+    headline: 'Bringing China’s top league to the West.',
+    summary: 'Managing social for the fan-made English-language broadcast of the LPL, the Chinese professional League of Legends league.',
+    did: [
+      'Localize Chinese-language storylines for Western audiences.',
+      'Coordinate with talent and production on launch days.',
+      'Grew engagement through reactive, narrative-driven posting on X.',
+    ],
+    stats: [],
+    links: [{ label: '@LPL_English on X', url: 'https://x.com/LPL_English' }],
+    posts: [],
+  },
+  {
+    id: 'wildcat-esports',
+    discipline: 'Leadership & community',
+    org: 'Wildcat Esports',
+    company: 'SUNY Polytechnic Institute',
+    role: 'President',
+    period: 'Apr 2023 — May 2025',
+    headline: 'Turning a club into a campus institution.',
+    summary: 'Led the esports program at SUNY Poly: competitive and casual gaming for the whole campus.',
+    did: [
+      'Led a 7-person exec team running competitive and casual gaming programming for 500+ students.',
+      'Competed on and coached the Overwatch 2 varsity team to championship runs in ECAC and SUNY leagues.',
+      'Built out events, tryouts, and league entries year-round.',
+    ],
+    stats: [
+      { value: '500+', label: 'students served' },
+      { value: '7', label: 'person exec team' },
+      { value: '2', label: 'leagues: ECAC & SUNY' },
+    ],
+    links: [],
+  },
+  {
+    id: 'video',
+    discipline: 'Video & motion',
+    org: 'SamIsDual',
+    company: 'Freelance',
+    role: 'Full editor & thumbnail designer',
+    period: '2022 — Present',
+    headline: 'Rhythm, retention, and the thumbnail that earns the click.',
+    summary: 'Full edits and thumbnails for SamIsDual’s League of Legends channel: long-form videos and Shorts, cut in Premiere Pro inside an existing channel voice.',
+    did: [
+      'Full editor on every video, start to finish, in Premiere Pro.',
+      'Designed every thumbnail.',
+      'Fast turnaround on revisions without breaking the channel’s voice.',
+    ],
+    stats: [],
+    showMedia: true,
+    links: [],
+  },
+];

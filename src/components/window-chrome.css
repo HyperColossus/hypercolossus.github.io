@@ -1,0 +1,54 @@
+/* Window frames. The shell supplies behavior; each app picks a look via desktopConfig.chrome. */
+.os-window { position: absolute; flex-direction: column; } /* not clipped, so the resize areas can reach past the frame */
+.win-titlebar { display: flex; align-items: center; flex-shrink: 0; touch-action: none; user-select: none; }
+.win-title { display: flex; align-items: center; gap: 5px; flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; pointer-events: none; }
+.win-title svg { flex-shrink: 0; }
+.win-controls { display: flex; }
+.win-controls button { display: grid; place-items: center; }
+.win-body { position: relative; flex: 1; min-height: 0; overflow: auto; user-select: text; }
+/* Resizing (all frames). Generous invisible grab areas that straddle the frame: 32px squares on the
+   bottom corners (reaching 12px outside the window) and 14px strips along the left, right and bottom
+   edges. Both corners show a diagonal grip that brightens on hover. */
+.win-resize, .win-edge { position: absolute; z-index: 5; touch-action: none; }
+.win-resize { bottom: -12px; width: 32px; height: 32px; z-index: 6; }
+.win-resize-left { left: -12px; cursor: nesw-resize; }
+.win-resize-right { right: -12px; cursor: nwse-resize; }
+.win-resize::after { content: ''; position: absolute; bottom: 14px; width: 14px; height: 14px; pointer-events: none; opacity: .85; transition: opacity .12s, filter .12s;
+  --grip-a: #fff; --grip-b: #808080; }
+.win-resize-right::after { right: 14px; background: linear-gradient(135deg, transparent 0 50%, var(--grip-a) 50% 56%, var(--grip-b) 56% 63%, transparent 63% 69%, var(--grip-a) 69% 75%, var(--grip-b) 75% 82%, transparent 82% 88%, var(--grip-a) 88% 94%, var(--grip-b) 94%); }
+.win-resize-left::after { left: 14px; background: linear-gradient(225deg, transparent 0 50%, var(--grip-a) 50% 56%, var(--grip-b) 56% 63%, transparent 63% 69%, var(--grip-a) 69% 75%, var(--grip-b) 75% 82%, transparent 82% 88%, var(--grip-a) 88% 94%, var(--grip-b) 94%); }
+.win-resize:hover::after, .win-resize:active::after { opacity: 1; filter: brightness(1.25) drop-shadow(0 0 1px #fff8); }
+.win-edge-left, .win-edge-right { top: 28px; bottom: 20px; width: 14px; cursor: ew-resize; }
+.win-edge-left { left: -9px; }
+.win-edge-right { right: -9px; }
+.win-edge-bottom { left: 20px; right: 20px; bottom: -9px; height: 14px; cursor: ns-resize; }
+
+/* ---------- Classic: the Cola OS default, 90s-style ---------- */
+.os-window[data-chrome='classic'] { padding: 3px; background: var(--os-face); box-shadow: inset -1px -1px var(--os-dark), inset 1px 1px var(--os-light), inset -2px -2px var(--os-shadow), inset 2px 2px var(--os-white), 2px 2px 0 #0003; }
+.os-window[data-chrome='classic'] .win-titlebar { height: 20px; padding: 0 2px 0 4px; gap: 4px; color: #fff; background: linear-gradient(90deg, var(--os-title), var(--os-title-2)); font: 700 12px var(--os-font); }
+.os-window[data-chrome='classic'][data-active='false'] .win-titlebar { color: var(--os-face); background: linear-gradient(90deg, #7b7b7b, #b5b5b5); }
+.os-window[data-chrome='classic'] .win-controls { gap: 2px; }
+.os-window[data-chrome='classic'] .win-controls button { width: 17px; height: 15px; color: #000; background: var(--os-face); box-shadow: inset -1px -1px var(--os-dark), inset 1px 1px var(--os-white), inset -2px -2px var(--os-shadow), inset 2px 2px var(--os-light); }
+.os-window[data-chrome='classic'] .win-controls .win-close { margin-left: 2px; }
+.os-window[data-chrome='classic'] .win-controls button:active { box-shadow: inset 1px 1px var(--os-dark), inset -1px -1px var(--os-white), inset 2px 2px var(--os-shadow); }
+.os-window[data-chrome='classic'] .win-body { margin-top: 2px; }
+
+/* ---------- XP-era "Luna" frame for the web browser. Referential, no branded assets. ---------- */
+.os-window[data-chrome='xp'] { border: 3px solid #0842c9; border-top: 0; border-radius: 8px 8px 2px 2px; background: #ece9d8; box-shadow: 0 10px 30px #0006; }
+.os-window[data-chrome='xp'] .win-titlebar { height: 30px; padding: 0 5px 0 8px; gap: 8px; border-radius: 7px 7px 0 0; color: #fff; background: linear-gradient(180deg, #3d95ff 0%, #0a61e8 12%, #0453e0 45%, #0660f5 85%, #0848c4 100%); }
+.os-window[data-chrome='xp'][data-active='false'] .win-titlebar { background: linear-gradient(180deg, #a6bcf5 0%, #7d9ae6 20%, #7593e0 80%, #6b87d4 100%); }
+.os-window[data-chrome='xp'] .win-title { gap: 7px; font: 700 12px 'Trebuchet MS', Tahoma, sans-serif; letter-spacing: .01em; text-shadow: 1px 1px #0a1f6b; }
+.os-window[data-chrome='xp'] .win-controls { gap: 2px; }
+.os-window[data-chrome='xp'] .win-controls button { width: 21px; height: 21px; border: 1px solid #fff; border-radius: 3px; color: #fff; background: linear-gradient(180deg, #5b9bff, #1a5ee9 60%, #1553d6); }
+.os-window[data-chrome='xp'] .win-controls button:hover { background: linear-gradient(180deg, #7eb1ff, #2f72f5 60%, #2463e8); }
+.os-window[data-chrome='xp'] .win-controls .win-close { background: linear-gradient(180deg, #f39a7c, #e0552f 55%, #c9381a); }
+.os-window[data-chrome='xp'] .win-controls .win-close:hover { background: linear-gradient(180deg, #ffb49a, #f06a44 55%, #d9482a); }
+
+/* ---------- Classic Steam frame (olive, 2003-era). Referential, no Valve assets. ---------- */
+.os-window[data-chrome='steam'] { background: #4c5844; border: 1px solid; border-color: #8c9880 #282e22 #282e22 #8c9880; box-shadow: 0 8px 22px #0007; }
+.os-window[data-chrome='steam'] .win-titlebar { height: 24px; padding: 0 4px 0 8px; gap: 6px; background: #4c5844; color: #dee5d7; font: 700 12px Tahoma, Verdana, sans-serif; }
+.os-window[data-chrome='steam'][data-active='false'] .win-titlebar { color: #8f9985; }
+.os-window[data-chrome='steam'] .win-controls { gap: 2px; }
+.os-window[data-chrome='steam'] .win-controls button { width: 18px; height: 16px; border: 1px solid; border-color: #8c9880 #282e22 #282e22 #8c9880; background: #4c5844; color: #dee5d7; }
+.os-window[data-chrome='steam'] .win-controls button:hover { color: #c4b550; }
+.os-window[data-chrome='steam'] .win-resize::after { --grip-a: #8c9880; --grip-b: #282e22; }
